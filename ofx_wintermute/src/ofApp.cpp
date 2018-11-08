@@ -1,5 +1,8 @@
 #include "ofApp.h"
+#include "Tile.h"
 
+//const int matrixWidth = 320;
+//const int matrixHeight= 180;
 
 const int matrixWidth = 160;
 const int matrixHeight= 90;
@@ -12,11 +15,17 @@ typedef struct pixelInfo{
   int state = 0;
 } pixelInfo;
 
-ofColor color_matrix[matrixWidth][matrixHeight];
-pixelInfo info_matrix[matrixWidth][matrixHeight];
 
-int horizontalStep;
-int verticalStep;
+
+ofColor color_matrix[matrixWidth][matrixHeight];
+//pixelInfo info_matrix[matrixWidth][matrixHeight];
+
+Tile tile_matrix[matrixWidth][matrixHeight];
+
+
+
+int horizontal_step;
+int vertical_step;
 
 
 
@@ -25,22 +34,25 @@ int verticalStep;
 void ofApp::setup(){
   int maxVal = matrixWidth * matrixHeight;
   
-  horizontalStep = ofGetWindowWidth()/matrixWidth;
-  verticalStep = ofGetWindowHeight()/matrixHeight;
+  horizontal_step = ofGetWindowWidth()/matrixWidth;
+  vertical_step = ofGetWindowHeight()/matrixHeight;
 
   for ( int i=0; i<matrixWidth; i++){
     // step through vertically
     for ( int j=0; j<matrixHeight; j++ ){
-      pixelInfo p;
-      p.switchProbability = ((float) (i * j) / maxVal);
+      //pixelInfo p;
+      //Tile t = new Tile(i, j, Tile::DEAD, Tile::ALIVE, 0.5);
+      // t.switchProbability = ((float) i  / matrixWidth);
       //p.switchProbability = ((i * j) % 2 == 0 ? 0.0 : ((float) (i * j)/maxVal));
-      info_matrix[i][j] = p;
+      //p.switchProbability = 0.5;
+      //tile_matrix[i][j] = t;
+      tile_matrix[i][j].setup(i, j, Tile::DEAD, Tile::ALIVE, 0.999);
     }
   }  
   
   
-  ofBackground(255,255,255);
-    //ofEnableSmoothing();
+  //ofBackground(255,255,255);
+    ofEnableSmoothing();
     ofEnableAlphaBlending();
   ofSetWindowTitle("Wintermute");
     
@@ -51,6 +63,7 @@ void ofApp::setup(){
     // initialise member variables to the centre of the screen
     //mouseXPercent = 0.5f;
     //mouseYPercent = 0.5f;
+
 }
 
 /*
@@ -63,33 +76,50 @@ void matrix_iterator(pixelInfo *matrix, void * funPtr){
 }
 */
 
-void static_point(pixelInfo matrix[][matrixHeight], int center_x, int center_y, int radius, float exp){
-  for ( int i=0; i<matrixWidth; i++){
+void static_point(pixelInfo matrix[][matrixHeight],
+		  int center_x, int center_y,
+		  int radius, float exp){
+  //std::cout << center_x << "static_point " << center_y <<  " radius: " << radius << endl;
+  int minWidth = ((center_x - radius >= 0) ? center_x - radius  : 0 );
+  //std::cout << minWidth << endl;
+  int maxWidth = ((center_x + radius < matrixWidth) ? center_x + radius : matrixWidth - 1);
+  //std::cout << maxWidth << endl;
+  int minHeight = ((center_x - radius >= 0) ? center_y - radius  : 0);
+  //std::cout << minHeight << endl;
+  int maxHeight = ((center_x + radius < matrixHeight) ? center_y + radius : matrixHeight - 1);
+  //std::cout << minHeight << endl;
+  for (int i = minWidth; i<matrixWidth; i++){
   // step through vertically
-    for ( int j=0; j<matrixHeight; j++ ){
-      float delta = sqrt((pow(i - center_x, 2.0)) + pow(j - center_y, 2.0));
+    for (int j=minHeight; j<maxHeight; j++ ){
+      float delta = sqrt(pow(i - center_x, 2.0) + pow(j - center_y, 2.0));
       if (delta < radius){
-	matrix[i][j].switchProbability *= delta/radius; 
+       	matrix[i][j].switchProbability *= pow(delta/(float) radius, exp);
+	//       	matrix[i][j].switchProbability *= (delta / radius);
+	//matrix[i][j].switchProbability *= (delta / radius);
+	//	std::cout << matrix[i][j].switchProbability<< endl;
+	//	std::cout << delta / radius << endl;
+	//std::cout << matrix[i][j].switchProbability << endl;
       }
     }
-
   }
 }
 
 //--------------------------------------------------------------
 void ofApp::update(){
   int maxVal = matrixWidth * matrixHeight;
-
+  
   for ( int i=0; i<matrixWidth; i++){
   // step through vertically
     for ( int j=0; j<matrixHeight; j++ ){
-      info_matrix[i][j].switchProbability = 0.5;
+      //tile_matrix[i][j].switchProbability(0.5);
+      tile_matrix[i][j].update();
     }
   }
-  static_point(info_matrix, 80, 45, 44, 2.0);
-  static_point(info_matrix, 10, 45, 25, 2.0);
-  static_point(info_matrix, 90, 69, 10, 2.0);
-  static_point(info_matrix, 100, 50, 5, 2.0);
+  
+  //static_point(info_matrix, 80, 45, 12, 1.0);
+  //static_point(info_matrix, 10, 45, 25, 2.0);
+  //static_point(info_matrix, 90, 69, 10, 5.0);
+  //static_point(info_matrix, 100, 50, 5, 10.0);
 
 }
 
@@ -133,13 +163,11 @@ void ofApp::draw(){
   for ( int i=0; i<matrixWidth; i++){
     // step through vertically
     for ( int j=0; j<matrixHeight; j++ ){
+      tile_matrix[i][j].draw(horizontal_step, vertical_step);
       
-      ofSetColor( select_color(info_matrix[i][j]) );
-            ofDrawRectangle(i * horizontalStep, j * verticalStep, horizontalStep, verticalStep  );
-        }
     }
   
-    
+  }
 }
 
 
