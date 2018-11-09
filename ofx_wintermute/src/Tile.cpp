@@ -23,9 +23,6 @@ void Tile::update(){
   else {
     roll_switch_to_target();
   }
-
-  
-
 }
 
 void Tile::roll_switch_from_target(){

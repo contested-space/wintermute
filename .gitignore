@@ -1,3 +1,7 @@
+ofx_intermute/bin/
+ofx_wintermute/obj/
+*.qbs
+
 # Prerequisites
 *.d
 
