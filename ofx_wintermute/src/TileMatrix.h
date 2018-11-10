@@ -12,17 +12,20 @@ class TileMatrix {
   void setup(int _width, int _height);
   void update();
   void draw();
-  tessBackground background;
-  vector<Tessellation> tess_vector;
+  
+  
   TileMatrix();
   Tile get_tile(int x, int y);
+  void add_tessellation(Tessellation *t);
 
   private:
   Tile** matrix;
   int height;
   int width;  
   int switch_speed;
-
+  vector<Tessellation*> tess_vector;
+  tessBackground background;
+  
 };
 
 #endif

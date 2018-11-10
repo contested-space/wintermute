@@ -1,9 +1,10 @@
 #include "ofApp.h"
 #include "Tile.h"
 #include "TileMatrix.h"
+#include "Tessellation.h"
 
-//const int matrixWidth = 320;
-//const int matrixHeight= 180;
+//const int matrix_width = 320;
+//const int matrix_height= 180;
 
 const int matrix_width = 160;
 const int matrix_height= 90;
@@ -17,6 +18,14 @@ int vertical_step;
 //--------------------------------------------------------------
 void ofApp::setup(){
   tile_matrix.setup(matrix_width, matrix_height);
+  tessStaticPoint *sp = new tessStaticPoint();
+  sp->setup(80, 45, 20, 1.0);
+  //tessStaticPoint *sp2 = new tessStaticPoint();
+  //sp2->setup(240, 45, 20, 1.0);
+  tile_matrix.add_tessellation(sp);
+  //tile_matrix.add_tessellation(sp2);
+
+  
   horizontal_step = ofGetWindowWidth()/matrix_width;
   vertical_step = ofGetWindowHeight()/matrix_height;
 
@@ -26,8 +35,8 @@ void ofApp::setup(){
     
     //ofSetRectMode(OF_RECTMODE_CENTER);
     
-  ofSetFrameRate(24);
-
+  ofSetFrameRate(60);
+  
 }
 
 /*
