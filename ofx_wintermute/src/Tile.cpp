@@ -3,12 +3,14 @@
 void Tile::setup(int coord_x, int coord_y,
 	   char init_state,
 	   char init_target_state,
-	   float sttprob){
+	   float sttprob,
+	   float sftprob){
   x = coord_x;
   y = coord_y;
   state = init_state;
   target_state = init_target_state;
   switch_to_target_probability = sttprob;
+  switch_from_target_probability = sftprob;
   
 }
 
@@ -26,7 +28,7 @@ void Tile::update(){
 }
 
 void Tile::roll_switch_from_target(){
-  if (ofRandom(1.0) > switch_to_target_probability) {
+  if (ofRandom(1.0) < switch_from_target_probability) {
     state = ~state;
   }
 }

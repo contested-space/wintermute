@@ -22,6 +22,9 @@ void ofApp::setup(){
   sp->setup(80, 45, 20, 1.0);
   //tessStaticPoint *sp2 = new tessStaticPoint();
   //sp2->setup(240, 45, 20, 1.0);
+  tessStaticPoint *np = new tessStaticPoint();
+  np->setup(40, 40, 10, 1.0);
+  sp->morph_into(np, 5.0);
   tile_matrix.add_tessellation(sp);
   //tile_matrix.add_tessellation(sp2);
 
@@ -35,7 +38,7 @@ void ofApp::setup(){
     
     //ofSetRectMode(OF_RECTMODE_CENTER);
     
-  ofSetFrameRate(60);
+  ofSetFrameRate(24);
   
 }
 

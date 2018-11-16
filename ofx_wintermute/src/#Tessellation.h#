@@ -33,6 +33,7 @@ class tessStaticPoint : public Tessellation {
   private:
   tessStaticPoint *start_state;
   tessStaticPoint *end_state;
+  tessStaticPoint *present_state;
   uint64_t start_time;
   uint64_t end_time;
   bool morphing;
