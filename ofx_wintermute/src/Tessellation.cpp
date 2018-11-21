@@ -31,6 +31,15 @@ void tessBackground::setup(Tile** tm, int matrix_width, int matrix_height, int p
 	  tm[i][j].setup(i, j, Tile::DONT_CARE, Tile::DONT_CARE, 0.0, 0.0);
 	}
       }
+      break;
+    case 1:
+      for (int i = 0; i < matrix_width; i++){
+	for (int j = 0; j < matrix_height; j++){
+	  cout << "1.1.1.2" << i << endl;
+	  cout << "1.1.1.3" << j << endl;
+	  tm[i][j].setup(i, j, Tile::DEAD, Tile::ALIVE, 0.0, 0.0);
+	}
+      }
   }
 }
 
@@ -40,11 +49,24 @@ void tessBackground::update(Tile** tm, int matrix_width, int matrix_height){
       for (int i = 0; i < matrix_width; i++){
 	for (int j = 0; j < matrix_height; j++){
 	  tm[i][j].previous_prob_to = tm[i][j].switch_to_target_probability;
-	  tm[i][j].previous_prob_from = tm[i][j].switch_from_target_probability;      
+	  tm[i][j].previous_prob_from = tm[i][j].switch_from_target_probability;     
 	  tm[i][j].switch_to_target_probability = 0.5;
 	  tm[i][j].switch_from_target_probability = 0.5;
 	}
       }
+    case 1:
+      for (int i = 0; i < matrix_width; i++){
+	for (int j = 0; j < matrix_height; j++){
+	  tm[i][j].previous_prob_to = tm[i][j].switch_to_target_probability;
+	  tm[i][j].previous_prob_from = tm[i][j].switch_from_target_probability;     
+	  tm[i][j].switch_to_target_probability = 1.0;
+	  tm[i][j].switch_from_target_probability = 0.0;
+	  tm[i][j].target_state = Tile::DEAD;
+	  //cout << "1.1.1.2" << i << endl;
+	  //cout << "1.1.1.3" << j << endl;
+	}
+    }
+
   }
 }
 
@@ -80,6 +102,7 @@ void tessStaticPoint::update(Tile** tm, int matrix_width, int matrix_height){
 								previous_prob_from,
 								exp),
 							 ((float)(delta))/radius);
+	  
 	  //tm[i][j].switch_to_target_probability = ofLerp(1.0, previous_prob, delta);
 	  //tm[i][j].switch_from_target_probability = 0.2;	  
 	  //       	matrix[i][j].switchProbability *= (delta / radius);
@@ -90,6 +113,7 @@ void tessStaticPoint::update(Tile** tm, int matrix_width, int matrix_height){
 	}
       }
     }
+    
   }
   else {
     float ratio =((float) (ofGetElapsedTimeMillis() - start_time)) /((float) (end_time - start_time));
@@ -143,6 +167,7 @@ void tessStaticPoint::update(Tile** tm, int matrix_width, int matrix_height){
       }
     }
     if (ofGetElapsedTimeMillis() > end_time){
+      //start_state = end_state;
       morphing = false;
     }
   }

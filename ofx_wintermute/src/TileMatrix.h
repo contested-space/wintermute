@@ -12,6 +12,7 @@ class TileMatrix {
   void setup(int, int);
   void update();
   void draw();
+  void clear_tessellations();
   
   
   TileMatrix();

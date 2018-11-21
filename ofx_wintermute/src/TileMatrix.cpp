@@ -9,11 +9,13 @@ void TileMatrix::setup(int matrix_width, int matrix_height){
   
   for (int i = 0; i < matrix_width; i++){
     matrix[i] = new Tile[matrix_height];
+    /*
     for (int j = 0; j < matrix_height; j++){
       //matrix[i][j] = new Tile();
       matrix[i][j].setup(i, j, Tile::DEAD, Tile::ALIVE, 0.5, 0.5);
       //matrix[i][j].update();
     }
+    */
   }
   
   
@@ -21,7 +23,7 @@ void TileMatrix::setup(int matrix_width, int matrix_height){
   cout << "1.1" <<endl;
   tessBackground background;
   cout << "1.1.1" <<endl;
-  background.setup(matrix, width, height, 0);
+  background.setup(matrix, width, height, 1);
   cout << "1.2" <<endl;
   for (int i = 0; i<matrix_width; i++){
     for (int j = 0; j < matrix_height; j++){
@@ -40,6 +42,10 @@ Tile TileMatrix::get_tile(int x, int y){
 
 TileMatrix::TileMatrix(){
 
+}
+
+void TileMatrix::clear_tessellations(){
+  tess_vector.clear();
 }
 
 void TileMatrix::add_tessellation(Tessellation *t){

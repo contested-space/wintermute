@@ -24,12 +24,12 @@ void ofApp::setup(){
     cout << "2"<< endl;
   tessStaticPoint *sp = new tessStaticPoint();
     cout << "3"<< endl;
-  sp->setup(80, 0, 20, Tile::ALIVE, 0.001, 0.001, 0.0);
+  sp->setup(80, 45, 20, Tile::ALIVE, 0.01, 0.001, 1.0);
     cout << "4"<< endl;
   //tessStaticPoint *sp2 = new tessStaticPoint();
   //sp2->setup(240, 45, 20, 1.0);
   tessStaticPoint *np = new tessStaticPoint();
-  np->setup(80, 150, 20, Tile::ALIVE, 0.1, 0.1, 0.0);
+  np->setup(15, 45, 10, Tile::ALIVE, 0.5, 0.5, 0.0);
   sp->morph_into(np, 5.0);
   tile_matrix.add_tessellation(sp);
   //tile_matrix.add_tessellation(sp2);
@@ -108,6 +108,7 @@ void ofApp::draw(){
 
 //--------------------------------------------------------------
 void ofApp::keyPressed  (int key){
+  tile_matrix.clear_tessellations();
 }
 
 //--------------------------------------------------------------
