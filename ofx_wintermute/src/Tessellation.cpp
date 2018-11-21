@@ -28,7 +28,7 @@ void tessBackground::setup(Tile** tm, int matrix_width, int matrix_height, int p
 	for (int j = 0; j < matrix_height; j++){
 	  cout << "1.1.1.2" << i << endl;
 	  cout << "1.1.1.3" << j << endl;
-	  tm[i][j].setup(i, j, Tile::DONT_CARE, Tile::DONT_CARE, 0.0, 0.0);
+	  tm[i][j].setup(i, j, Tile::DONT_CARE, Tile::DONT_CARE, 0.01, 0.0);
 	}
       }
       break;
@@ -59,9 +59,9 @@ void tessBackground::update(Tile** tm, int matrix_width, int matrix_height){
 	for (int j = 0; j < matrix_height; j++){
 	  tm[i][j].previous_prob_to = tm[i][j].switch_to_target_probability;
 	  tm[i][j].previous_prob_from = tm[i][j].switch_from_target_probability;     
-	  tm[i][j].switch_to_target_probability = 1.0;
-	  tm[i][j].switch_from_target_probability = 0.0;
-	  tm[i][j].target_state = Tile::DEAD;
+	  tm[i][j].switch_to_target_probability = 0.1;
+	  tm[i][j].switch_from_target_probability = 0.0001;
+	  tm[i][j].target_state = Tile::ALIVE;
 	  //cout << "1.1.1.2" << i << endl;
 	  //cout << "1.1.1.3" << j << endl;
 	}
