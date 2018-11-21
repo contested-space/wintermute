@@ -19,8 +19,11 @@ class Tile {
   int y;
   float switch_to_target_probability;
   float switch_from_target_probability;
+  float previous_prob_to;
+  float previous_prob_from;
   char target_state;
   char state;
+  char previous_state;
   
 
   Tile();

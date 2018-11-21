@@ -9,7 +9,7 @@ class TileMatrix {
   public:
 
   float switch_rate;
-  void setup(int _width, int _height);
+  void setup(int, int);
   void update();
   void draw();
   

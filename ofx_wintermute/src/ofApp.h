@@ -1,6 +1,8 @@
 #pragma once
 
 #include "ofMain.h"
+//#define matrix_width 160
+//#define matrix_height 90
 
 class ofApp : public ofBaseApp{
 	

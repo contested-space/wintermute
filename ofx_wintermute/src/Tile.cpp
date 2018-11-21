@@ -19,7 +19,7 @@ Tile::Tile(){
 }
 
 void Tile::update(){
-  if (state|target_state){
+  if (state & target_state){
     roll_switch_from_target();
   }
   else {
@@ -29,12 +29,14 @@ void Tile::update(){
 
 void Tile::roll_switch_from_target(){
   if (ofRandom(1.0) < switch_from_target_probability) {
+    previous_state = state;
     state = ~state;
   }
 }
 
 void Tile::roll_switch_to_target(){
   if (ofRandom(1.0) < switch_to_target_probability) {
+    previous_state = state;
     state = ~state;
   }
 }

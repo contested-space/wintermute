@@ -9,6 +9,8 @@
 const int matrix_width = 160;
 const int matrix_height= 90;
 
+
+
 TileMatrix tile_matrix;
 
 int horizontal_step;
@@ -17,13 +19,17 @@ int vertical_step;
 
 //--------------------------------------------------------------
 void ofApp::setup(){
+  cout << "1"<< endl;
   tile_matrix.setup(matrix_width, matrix_height);
+    cout << "2"<< endl;
   tessStaticPoint *sp = new tessStaticPoint();
-  sp->setup(80, 45, 20, 1.0);
+    cout << "3"<< endl;
+  sp->setup(80, 0, 20, Tile::ALIVE, 0.001, 0.001, 0.0);
+    cout << "4"<< endl;
   //tessStaticPoint *sp2 = new tessStaticPoint();
   //sp2->setup(240, 45, 20, 1.0);
   tessStaticPoint *np = new tessStaticPoint();
-  np->setup(40, 40, 10, 1.0);
+  np->setup(80, 150, 20, Tile::ALIVE, 0.1, 0.1, 0.0);
   sp->morph_into(np, 5.0);
   tile_matrix.add_tessellation(sp);
   //tile_matrix.add_tessellation(sp2);

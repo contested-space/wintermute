@@ -13,6 +13,43 @@ tessStaticPoint::tessStaticPoint(){
 
 }
 
+tessBackground::tessBackground(){
+
+}
+
+void tessBackground::setup(Tile** tm, int matrix_width, int matrix_height, int pttrn){
+  pattern = pttrn;
+  cout << "1.1.1.1" << endl;
+  cout << "1.1.1.1 w: " << matrix_width << endl;
+  cout << "1.1.1.1 h: " << matrix_height << endl;
+  switch (pattern){
+    case 0:
+      for (int i = 0; i < matrix_width; i++){
+	for (int j = 0; j < matrix_height; j++){
+	  cout << "1.1.1.2" << i << endl;
+	  cout << "1.1.1.3" << j << endl;
+	  tm[i][j].setup(i, j, Tile::DONT_CARE, Tile::DONT_CARE, 0.0, 0.0);
+	}
+      }
+  }
+}
+
+void tessBackground::update(Tile** tm, int matrix_width, int matrix_height){
+  switch(pattern){
+    case 0:
+      for (int i = 0; i < matrix_width; i++){
+	for (int j = 0; j < matrix_height; j++){
+	  tm[i][j].previous_prob_to = tm[i][j].switch_to_target_probability;
+	  tm[i][j].previous_prob_from = tm[i][j].switch_from_target_probability;      
+	  tm[i][j].switch_to_target_probability = 0.5;
+	  tm[i][j].switch_from_target_probability = 0.5;
+	}
+      }
+  }
+}
+
+
+
 void tessStaticPoint::update(Tile** tm, int matrix_width, int matrix_height){
   if (!morphing){
     //cout << "update!" << endl;
@@ -25,15 +62,26 @@ void tessStaticPoint::update(Tile** tm, int matrix_width, int matrix_height){
     //std::cout << minHeight << endl;
     int maxHeight = ((center_x + radius < matrix_height) ? center_y + radius : matrix_height - 1);
     //std::cout << minHeight << endl;
-    for (int i = minWidth; i<matrix_width; i++){
+    for (int i = minWidth; i<maxWidth; i++){
       // step through vertically
       for (int j=minHeight; j<maxHeight; j++ ){
 	float delta = sqrt(pow(i - center_x, 2.0) + pow(j - center_y, 2.0));
 	if (delta < radius){
 	  //       	tm[i][j].switch_to_target_probability *= pow(delta/(float) radius, exp);
-	  float previous_prob = tm[i][j].switch_to_target_probability;
-	  tm[i][j].switch_to_target_probability = ofLerp(1.0, previous_prob, delta);
-	  tm[i][j].switch_from_target_probability = 0.2;	  
+	  float previous_prob = tm[i][j].previous_prob_to;
+	  float previous_prob_from = tm[i][j].previous_prob_from;
+	  tm[i][j].switch_to_target_probability = ofLerp(switch_to_target_state,
+							 ofLerp(switch_to_target_state,
+								previous_prob,
+								exp),
+							 ((float)(delta))/radius);
+	  tm[i][j].switch_from_target_probability = ofLerp(switch_from_target_state,
+							 ofLerp(switch_from_target_state,
+								previous_prob_from,
+								exp),
+							 ((float)(delta))/radius);
+	  //tm[i][j].switch_to_target_probability = ofLerp(1.0, previous_prob, delta);
+	  //tm[i][j].switch_from_target_probability = 0.2;	  
 	  //       	matrix[i][j].switchProbability *= (delta / radius);
 	  //matrix[i][j].switchProbability *= (delta / radius);
 	  //	std::cout << matrix[i][j].switchProbability<< endl;
@@ -44,11 +92,17 @@ void tessStaticPoint::update(Tile** tm, int matrix_width, int matrix_height){
     }
   }
   else {
-    float delta =((float) (ofGetElapsedTimeMillis() - start_time)) /((float) (end_time - start_time));
-    int new_center_x = (int) ofLerp(start_state->center_x, end_state->center_x, delta);
-    int new_center_y = (int) ofLerp(start_state->center_y, end_state->center_y, delta);
-    int new_radius = (int) ofLerp(start_state->radius, end_state->radius, delta);
-    float new_exp = ofLerp(start_state->exp, end_state->exp, delta);
+    float ratio =((float) (ofGetElapsedTimeMillis() - start_time)) /((float) (end_time - start_time));
+    int new_center_x = (int) ofLerp(start_state->center_x, end_state->center_x, ratio);
+    int new_center_y = (int) ofLerp(start_state->center_y, end_state->center_y, ratio);
+    int new_radius = (int) ofLerp(start_state->radius, end_state->radius, ratio);
+    float new_to = ofLerp(start_state->switch_to_target_state,
+			  end_state->switch_to_target_state,
+			  ratio);
+    float new_from = ofLerp(start_state->switch_from_target_state,
+			    end_state->switch_from_target_state,
+			    ratio);
+    float new_exp = ofLerp(start_state->exp, end_state->exp, ratio);
       
     int minWidth = ((new_center_x - new_radius >= 0) ? new_center_x - new_radius  : 0 );
     //std::cout << minWidth << endl;
@@ -58,16 +112,28 @@ void tessStaticPoint::update(Tile** tm, int matrix_width, int matrix_height){
     //std::cout << minHeight << endl;
     int maxHeight = ((new_center_x + new_radius < matrix_height) ? new_center_y + new_radius : matrix_height - 1);
     //std::cout << minHeight << endl;
-    for (int i = minWidth; i<matrix_width; i++){
+    for (int i = minWidth; i<maxWidth; i++){
       // step through vertically
       for (int j=minHeight; j<maxHeight; j++ ){
 	float delta = sqrt(pow(i - new_center_x, 2.0) + pow(j - new_center_y, 2.0));
 	if (delta < new_radius){
 	  //       	tm[i][j].switch_to_target_probability *= pow(delta/(float) radius, exp);
 	  //tm[i][j].switch_to_target_probability = 1;
+   
 	  float previous_prob = tm[i][j].switch_to_target_probability;
-	  tm[i][j].switch_to_target_probability = ofLerp(previous_prob, 1.0, delta);
-	  tm[i][j].switch_from_target_probability = 0.2;	  
+	  float previous_prob_from = tm[i][j].switch_from_target_probability;
+	  tm[i][j].switch_to_target_probability = ofLerp(new_to,
+							 ofLerp(new_to,
+								previous_prob,
+								new_exp),
+							 ((float)(delta))/radius);
+	  tm[i][j].switch_from_target_probability = ofLerp(new_from,
+							 ofLerp(new_from,
+								previous_prob_from,
+								new_exp),
+							 ((float)(delta))/radius);
+	  //tm[i][j].switch_to_target_probability = ofLerp(previous_prob, 1.0, delta);
+	  //tm[i][j].switch_from_target_probability = 0.2;	  
 	  //       	matrix[i][j].switchProbability *= (delta / radius);
 	  //matrix[i][j].switchProbability *= (delta / radius);
 	  //	std::cout << matrix[i][j].switchProbability<< endl;
@@ -88,18 +154,33 @@ void tessStaticPoint::morph_into(tessStaticPoint *sp, float dur){
   start_time = ofGetElapsedTimeMillis();
   end_time = start_time + (int) round(dur * 1000);
   start_state = new tessStaticPoint();
-  start_state->setup(center_x, center_y, radius, exp);
+  start_state->setup(center_x,
+		     center_y,
+		     radius,
+		     state,
+		     switch_to_target_state,
+		     switch_from_target_state,
+                     exp);
   end_state = sp;
 }
 
 void Tessellation::setup(){
 }
 
-void tessStaticPoint::setup(int coord_x, int coord_y, int _radius, float _exp){
+void tessStaticPoint::setup(int coord_x,
+			    int coord_y,
+			    int _radius,
+			    char _state,
+			    float _to,
+			    float _from,
+			    float _exp){
   //cout << "static point setup" << endl;
   center_x = coord_x;
   center_y = coord_y;
   radius = _radius;
+  state = _state;
+  switch_to_target_state = _to;
+  switch_from_target_state = _from;
   exp = _exp;
   
 }
