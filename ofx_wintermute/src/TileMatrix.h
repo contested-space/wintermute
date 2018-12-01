@@ -13,6 +13,7 @@ class TileMatrix {
   void update();
   void draw();
   void clear_tessellations();
+  tessBackground background;
   
   
   TileMatrix();
@@ -25,7 +26,7 @@ class TileMatrix {
   int width;  
   int switch_speed;
   vector<Tessellation*> tess_vector;
-  tessBackground background;
+
   
 };
 

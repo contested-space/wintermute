@@ -5,12 +5,17 @@
 //#include "TileMatrix.h"
 #include "Tile.h"
 
+
+char state_lerp(int, int, float);
+
 class Tessellation {
   public:
   Tessellation();
   virtual void setup();
   virtual void update(Tile** tm, int matrix_width, int matrix_height);
-
+  virtual void morph_into();
+  char target_state;
+  bool morphing;
   
 };
 
@@ -20,11 +25,12 @@ class tessBackground : public Tessellation {
   void setup(Tile** tm, int matrix_width, int matrix_height, int pttrn);
   void update(Tile** tm, int width, int height);
   int pattern;
-  char target_state;
+  //char target_state;
   float switch_to_target;
   float switch_from_target;
   void setup_snow(char target, float stt, float sft);
-  
+  void morph_into();
+  //char state;
   void set_state(char state);
 };
 
@@ -55,11 +61,9 @@ class tessStaticPoint : public Tessellation {
   
   uint64_t start_time;
   uint64_t end_time;
-  bool morphing;
 
 };
 
 
 
 #endif
-

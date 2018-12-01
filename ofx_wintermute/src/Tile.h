@@ -14,6 +14,7 @@ class Tile {
   void setup(int, int, char, char, float, float);
   void update();
   void draw(int horizontal_step, int vertival_step);
+  void set_target(char target, float sttp, float sftp);
 
   int x;
   int y;
@@ -32,6 +33,7 @@ class Tile {
   //char next_state;
   void roll_switch_from_target();
   void roll_switch_to_target();
+  void roll_DONT_CARE();
   //float switch_from_target_probability; //?
 
 };

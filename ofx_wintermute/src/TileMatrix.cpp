@@ -20,17 +20,17 @@ void TileMatrix::setup(int matrix_width, int matrix_height){
   
   
   //background = new tessBackground();
-  cout << "1.1" <<endl;
+  //cout << "1.1" <<endl;
   tessBackground background;
-  cout << "1.1.1" <<endl;
+  //cout << "1.1.1" <<endl;
   background.setup(matrix, width, height, 1);
-  cout << "1.2" <<endl;
+  //cout << "1.2" <<endl;
   for (int i = 0; i<matrix_width; i++){
     for (int j = 0; j < matrix_height; j++){
       matrix[i][j].update();
     }
   }
-  cout << "1.3" <<endl;
+  //cout << "1.3" <<endl;
   
 }
 
@@ -50,7 +50,7 @@ void TileMatrix::clear_tessellations(){
 
 void TileMatrix::add_tessellation(Tessellation *t){
   tess_vector.push_back(t);
-  //cout << "pushed!" <<endl;
+  ////cout << "pushed!" <<endl;
 }
 
 void TileMatrix::update(){
@@ -76,14 +76,22 @@ void TileMatrix::update(){
   }
   */
   background.update(matrix, width, height);
-  //cout << "size: " << tess_vector.size() << endl;
+  ////cout << "size: " << tess_vector.size() << endl;
   for (size_t i = 0; i < tess_vector.size(); i++){
-    //cout << "for once!" << endl;
+    ////cout << "for once!" << endl;
     tess_vector[i]->update(matrix, width, height);
   }
   for (int i = 0; i<width; i++){
     for (int j = 0; j < height; j++){
       matrix[i][j].update();
+    }
+  }
+  //reboucler a partir de la fin, retirer ceux qui sont terminés
+  for (int i = tess_vector.size() - 1; i >= 0; i--){
+    if (!tess_vector[i]->morphing){
+      free(tess_vector[i]);
+      tess_vector.erase(tess_vector.begin() + i);
+      cout << "Element" << i << " erased" << endl;
     }
   }
   

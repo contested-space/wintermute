@@ -9,6 +9,10 @@ void Tessellation::update(Tile** tm, int matrix_width, int matrix_height){
 
 }
 
+void Tessellation::morph_into(){
+
+}
+
 tessStaticPoint::tessStaticPoint(){
 
 }
@@ -19,71 +23,85 @@ tessBackground::tessBackground(){
 
 void tessBackground::setup(Tile** tm, int matrix_width, int matrix_height, int pttrn){
   pattern = pttrn;
+  target_state = Tile::DEAD;
   cout << "1.1.1.1" << endl;
-  cout << "1.1.1.1 w: " << matrix_width << endl;
-  cout << "1.1.1.1 h: " << matrix_height << endl;
+  //cout << "1.1.1.1 w: " << matrix_width << endl;
+  //cout << "1.1.1.1 h: " << matrix_height << endl;
   switch (pattern){
     case 0:
       for (int i = 0; i < matrix_width; i++){
 	for (int j = 0; j < matrix_height; j++){
-	  cout << "1.1.1.2" << i << endl;
-	  cout << "1.1.1.3" << j << endl;
-	  tm[i][j].setup(i, j, Tile::DONT_CARE, Tile::DONT_CARE, 0.01, 0.0);
+	  //cout << "1.1.1.2" << i << endl;
+	  //cout << "1.1.1.3" << j << endl;
+	  tm[i][j].setup(i, j, Tile::DONT_CARE, Tile::DONT_CARE, 1.0, 1.0);
+	  //tm[i][j].set_target(Tile::DEAD, 1.0, 1.0);
 	}
       }
       break;
     case 1:
       for (int i = 0; i < matrix_width; i++){
 	for (int j = 0; j < matrix_height; j++){
-	  cout << "1.1.1.2" << i << endl;
-	  cout << "1.1.1.3" << j << endl;
-	  tm[i][j].setup(i, j, Tile::DEAD, Tile::ALIVE, 0.0, 0.0);
+	  //cout << "1.1.1.2" << i << endl;
+	  //cout << "1.1.1.3" << j << endl;
+	  tm[i][j].setup(i, j, Tile::DEAD, Tile::ALIVE, 1.0, 1.0);
+	  //tm[i][j].set_target(Tile::ALIVE, 1.0, 1.0);
 	}
       }
   }
 }
 
 void tessBackground::update(Tile** tm, int matrix_width, int matrix_height){
+  //  cout <<"background update" << endl;
+  //cout <<"pattern: " << pattern << endl;
   switch(pattern){
     case 0:
+      //cout <<"pattern 0" << endl;
       for (int i = 0; i < matrix_width; i++){
 	for (int j = 0; j < matrix_height; j++){
+	  //tm[i][j].target_state = target_state;
 	  tm[i][j].previous_prob_to = tm[i][j].switch_to_target_probability;
-	  tm[i][j].previous_prob_from = tm[i][j].switch_from_target_probability;     
-	  tm[i][j].switch_to_target_probability = 0.5;
-	  tm[i][j].switch_from_target_probability = 0.5;
+	  tm[i][j].previous_prob_from = tm[i][j].switch_from_target_probability;
+	  tm[i][j].set_target(Tile::ALIVE, 0.1, 0.0001);
+	  //tm[i][j].switch_to_target_probability = 1.0;
+	  //tm[i][j].switch_from_target_probability = 0.0;
 	}
       }
+      break;
     case 1:
       for (int i = 0; i < matrix_width; i++){
 	for (int j = 0; j < matrix_height; j++){
+	  //tm[i][j].target_state = target_state;
 	  tm[i][j].previous_prob_to = tm[i][j].switch_to_target_probability;
-	  tm[i][j].previous_prob_from = tm[i][j].switch_from_target_probability;     
-	  tm[i][j].switch_to_target_probability = 0.1;
-	  tm[i][j].switch_from_target_probability = 0.0001;
-	  tm[i][j].target_state = Tile::ALIVE;
-	  //cout << "1.1.1.2" << i << endl;
-	  //cout << "1.1.1.3" << j << endl;
+	  tm[i][j].previous_prob_from = tm[i][j].switch_from_target_probability;
+	  tm[i][j].set_target(Tile::DEAD, 0.0, 1.0);
+	  //tm[i][j].switch_to_target_probability = 1.0;
+	  //tm[i][j].switch_from_target_probability = 0.0;
+	  //tm[i][j].target_state = Tile::ALIVE;
+	  ////cout << "1.1.1.2" << i << endl;
+	  ////cout << "1.1.1.3" << j << endl;
 	}
     }
 
   }
 }
 
+void tessBackground::morph_into(){
+
+}
 
 
 void tessStaticPoint::update(Tile** tm, int matrix_width, int matrix_height){
   if (!morphing){
-    //cout << "update!" << endl;
-    //std::cout << center_x << "static_point " << center_y <<  " radius: " << radius << endl;
+    ////cout << "update!" << endl;
+    //std:://cout << center_x << "static_point " << center_y <<  " radius: " << radius << endl;
     int minWidth = ((center_x - radius >= 0) ? center_x - radius  : 0 );
-    //std::cout << minWidth << endl;
+    //std:://cout << minWidth << endl;
     int maxWidth = ((center_x + radius < matrix_width) ? center_x + radius : matrix_width - 1);
-    //std::cout << maxWidth << endl;
+    //std:://cout << maxWidth << endl;
     int minHeight = ((center_x - radius >= 0) ? center_y - radius  : 0);
-    //std::cout << minHeight << endl;
+    //std:://cout << minHeight << endl;
     int maxHeight = ((center_x + radius < matrix_height) ? center_y + radius : matrix_height - 1);
-    //std::cout << minHeight << endl;
+    //std:://cout << minHeight << endl;
     for (int i = minWidth; i<maxWidth; i++){
       // step through vertically
       for (int j=minHeight; j<maxHeight; j++ ){
@@ -107,9 +125,9 @@ void tessStaticPoint::update(Tile** tm, int matrix_width, int matrix_height){
 	  //tm[i][j].switch_from_target_probability = 0.2;	  
 	  //       	matrix[i][j].switchProbability *= (delta / radius);
 	  //matrix[i][j].switchProbability *= (delta / radius);
-	  //	std::cout << matrix[i][j].switchProbability<< endl;
-	  //	std::cout << delta / radius << endl;
-	  //std::cout << matrix[i][j].switchProbability << endl;
+	  //	std:://cout << matrix[i][j].switchProbability<< endl;
+	  //	std:://cout << delta / radius << endl;
+	  //std:://cout << matrix[i][j].switchProbability << endl;
 	}
       }
     }
@@ -129,13 +147,13 @@ void tessStaticPoint::update(Tile** tm, int matrix_width, int matrix_height){
     float new_exp = ofLerp(start_state->exp, end_state->exp, ratio);
       
     int minWidth = ((new_center_x - new_radius >= 0) ? new_center_x - new_radius  : 0 );
-    //std::cout << minWidth << endl;
+    //std:://cout << minWidth << endl;
     int maxWidth = ((new_center_x + new_radius < matrix_width) ? new_center_x + new_radius : matrix_width - 1);
-    //std::cout << maxWidth << endl;
+    //std:://cout << maxWidth << endl;
     int minHeight = ((new_center_x - new_radius >= 0) ? new_center_y - new_radius  : 0);
-    //std::cout << minHeight << endl;
+    //std:://cout << minHeight << endl;
     int maxHeight = ((new_center_x + new_radius < matrix_height) ? new_center_y + new_radius : matrix_height - 1);
-    //std::cout << minHeight << endl;
+    //std:://cout << minHeight << endl;
     for (int i = minWidth; i<maxWidth; i++){
       // step through vertically
       for (int j=minHeight; j<maxHeight; j++ ){
@@ -143,7 +161,7 @@ void tessStaticPoint::update(Tile** tm, int matrix_width, int matrix_height){
 	if (delta < new_radius){
 	  //       	tm[i][j].switch_to_target_probability *= pow(delta/(float) radius, exp);
 	  //tm[i][j].switch_to_target_probability = 1;
-   
+	  
 	  float previous_prob = tm[i][j].switch_to_target_probability;
 	  float previous_prob_from = tm[i][j].switch_from_target_probability;
 	  tm[i][j].switch_to_target_probability = ofLerp(new_to,
@@ -156,13 +174,15 @@ void tessStaticPoint::update(Tile** tm, int matrix_width, int matrix_height){
 								previous_prob_from,
 								new_exp),
 							 ((float)(delta))/radius);
+	  tm[i][j].target_state = state_lerp(start_state->target_state, end_state->target_state,
+					     ratio);
 	  //tm[i][j].switch_to_target_probability = ofLerp(previous_prob, 1.0, delta);
 	  //tm[i][j].switch_from_target_probability = 0.2;	  
 	  //       	matrix[i][j].switchProbability *= (delta / radius);
 	  //matrix[i][j].switchProbability *= (delta / radius);
-	  //	std::cout << matrix[i][j].switchProbability<< endl;
-	  //	std::cout << delta / radius << endl;
-	  //std::cout << matrix[i][j].switchProbability << endl;
+	  //	std:://cout << matrix[i][j].switchProbability<< endl;
+	  //	std:://cout << delta / radius << endl;
+	  //std:://cout << matrix[i][j].switchProbability << endl;
 	}
       }
     }
@@ -182,7 +202,7 @@ void tessStaticPoint::morph_into(tessStaticPoint *sp, float dur){
   start_state->setup(center_x,
 		     center_y,
 		     radius,
-		     state,
+		     target_state,
 		     switch_to_target_state,
 		     switch_from_target_state,
                      exp);
@@ -199,13 +219,31 @@ void tessStaticPoint::setup(int coord_x,
 			    float _to,
 			    float _from,
 			    float _exp){
-  //cout << "static point setup" << endl;
+  ////cout << "static point setup" << endl;
   center_x = coord_x;
   center_y = coord_y;
   radius = _radius;
-  state = _state;
+  target_state = _state;
   switch_to_target_state = _to;
   switch_from_target_state = _from;
   exp = _exp;
   
+}
+
+
+//not a real lerp, transition from state_begin to state_end through DONT_CARE if they differ
+char state_lerp(int state_begin, int state_end, float pos){
+  if (state_begin == state_end){
+    return state_begin;
+  }
+  else if (state_begin != Tile::DONT_CARE && state_end !=Tile::DONT_CARE){
+    if (pos < 0.33) return state_begin;
+    if (pos < 0.67) return Tile::DONT_CARE;
+    else return state_end;
+  }
+  else {
+    if (pos < 0.5) return state_begin;
+    else return state_end;
+  }
+
 }
