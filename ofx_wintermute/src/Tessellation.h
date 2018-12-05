@@ -64,6 +64,35 @@ class tessStaticPoint : public Tessellation {
 
 };
 
+class tessStaticLine : public Tessellation {
+  public:
+  tessStaticLine();
+  virtual void update(Tile** tm, int matrix_width, int matrix_height);
+  virtual void setup(int coordX_0, int coordY_0,
+		     int coordX_1, int coordY_1,
+		     int _width,
+		     char _state,
+		     float _to,
+		     float _from,
+		     float _exp);
+  void morph_into(tessStaticLine *st, float dur);
+  int x_0;
+  int y_0;
+  int x_1;
+  int y_1;
+  int width;
+  char state;
+  float switch_to_target_state;
+  float switch_from_target_state;
+
+  private:
+  tessStaticLine *start_state;
+  tessStaticLine *end_stare;
+
+  uint64_t start_time;
+  uint64_t end_time;
+
+};
 
 
 #endif

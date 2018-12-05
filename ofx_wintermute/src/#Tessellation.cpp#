@@ -120,14 +120,6 @@ void tessStaticPoint::update(Tile** tm, int matrix_width, int matrix_height){
 								previous_prob_from,
 								exp),
 							 ((float)(delta))/radius);
-	  
-	  //tm[i][j].switch_to_target_probability = ofLerp(1.0, previous_prob, delta);
-	  //tm[i][j].switch_from_target_probability = 0.2;	  
-	  //       	matrix[i][j].switchProbability *= (delta / radius);
-	  //matrix[i][j].switchProbability *= (delta / radius);
-	  //	std:://cout << matrix[i][j].switchProbability<< endl;
-	  //	std:://cout << delta / radius << endl;
-	  //std:://cout << matrix[i][j].switchProbability << endl;
 	}
       }
     }
@@ -158,10 +150,7 @@ void tessStaticPoint::update(Tile** tm, int matrix_width, int matrix_height){
       // step through vertically
       for (int j=minHeight; j<maxHeight; j++ ){
 	float delta = sqrt(pow(i - new_center_x, 2.0) + pow(j - new_center_y, 2.0));
-	if (delta < new_radius){
-	  //       	tm[i][j].switch_to_target_probability *= pow(delta/(float) radius, exp);
-	  //tm[i][j].switch_to_target_probability = 1;
-	  
+	if (delta < new_radius){  
 	  float previous_prob = tm[i][j].switch_to_target_probability;
 	  float previous_prob_from = tm[i][j].switch_from_target_probability;
 	  tm[i][j].switch_to_target_probability = ofLerp(new_to,
@@ -176,13 +165,6 @@ void tessStaticPoint::update(Tile** tm, int matrix_width, int matrix_height){
 							 ((float)(delta))/radius);
 	  tm[i][j].target_state = state_lerp(start_state->target_state, end_state->target_state,
 					     ratio);
-	  //tm[i][j].switch_to_target_probability = ofLerp(previous_prob, 1.0, delta);
-	  //tm[i][j].switch_from_target_probability = 0.2;	  
-	  //       	matrix[i][j].switchProbability *= (delta / radius);
-	  //matrix[i][j].switchProbability *= (delta / radius);
-	  //	std:://cout << matrix[i][j].switchProbability<< endl;
-	  //	std:://cout << delta / radius << endl;
-	  //std:://cout << matrix[i][j].switchProbability << endl;
 	}
       }
     }
