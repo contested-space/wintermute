@@ -266,24 +266,51 @@ void process_osc_message(ofxOscMessage m){
   cout << "Got message: " << m.getAddress() << endl;
   if (m.getAddress() == "/Tessellation/Point/"){
     tessStaticPoint * sp = new tessStaticPoint();
-    sp->setup(m.getArgAsInt(0),
-	      m.getArgAsInt(1),
-	      m.getArgAsInt(2),
+    sp->setup((int) floor(m.getArgAsFloat(0) * matrix_width),
+	      (int) floor(m.getArgAsFloat(1) * matrix_height),
+	      (int) floor(m.getArgAsFloat(2) * MIN(matrix_width, matrix_height)),
 	      (m.getArgAsInt(3) == 0 ? Tile::DEAD : Tile::ALIVE),
 	      m.getArgAsFloat(4),
 	      m.getArgAsFloat(5),
-	      m.getArgAsFloat(6));
+			  m.getArgAsFloat(6));
     tessStaticPoint * np = new tessStaticPoint();
     //    np->setup(90, 45, 0, Tile::ALIVE, 0.8, 0.2, 0.0);
-    np->setup(m.getArgAsInt(7),
-	      m.getArgAsInt(8),
-	      m.getArgAsInt(9),
+    np->setup((int) floor(m.getArgAsFloat(7) * matrix_width),
+	      (int) floor(m.getArgAsFloat(8) * matrix_height),
+	      (int) floor(m.getArgAsFloat(9) * MIN(matrix_width, matrix_height)),
 	      (m.getArgAsInt(10) == 0 ? Tile::DEAD : Tile::ALIVE),
 	      m.getArgAsFloat(11),
 	      m.getArgAsFloat(12),
-	      m.getArgAsFloat(13));
+			  m.getArgAsFloat(13));
     sp->morph_into(np, m.getArgAsFloat(14));
     tile_matrix.add_tessellation(sp);
     
   }
+    if (m.getAddress() == "/Tessellation/Line/"){
+    tessStaticLine * sl = new tessStaticLine();
+    sl->setup((int) floor(m.getArgAsFloat(0) * matrix_width),
+	      (int) floor(m.getArgAsFloat(1) * matrix_height),
+	      (int) floor(m.getArgAsFloat(2) * matrix_width),
+	      (int) floor(m.getArgAsFloat(3) * matrix_height),
+	      (int) floor(m.getArgAsFloat(4) * MIN(matrix_width, matrix_height)),
+	      (m.getArgAsInt(5) == 0 ? Tile::DEAD : Tile::ALIVE),
+	      m.getArgAsFloat(6),
+	      m.getArgAsFloat(7),
+			  m.getArgAsFloat(8));
+    tessStaticLine * nl = new tessStaticLine();
+    //    np->setup(90, 45, 0, Tile::ALIVE, 0.8, 0.2, 0.0);
+    nl->setup((int) floor(m.getArgAsFloat(9) * matrix_width),
+	      (int) floor(m.getArgAsFloat(10) * matrix_height),
+	      (int) floor(m.getArgAsFloat(11) * matrix_width),
+	      (int) floor(m.getArgAsFloat(12) * matrix_height),
+	      (int) floor(m.getArgAsFloat(13) * MIN(matrix_width, matrix_height)),
+	      (m.getArgAsInt(14) == 0 ? Tile::DEAD : Tile::ALIVE),
+	      m.getArgAsFloat(15),
+	      m.getArgAsFloat(16),
+	      m.getArgAsFloat(17));
+    sl->morph_into(nl, m.getArgAsFloat(18));
+    tile_matrix.add_tessellation(sl);
+    
+  }
+  
 }

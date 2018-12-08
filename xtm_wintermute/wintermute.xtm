@@ -7,22 +7,21 @@
 (io:osc:send (+ (now) (* *second* 0.01))
 	     address
 	     "/Tessellation/Point/"
-	     (random 10 50)
-	     (random 0 100)
-	     (random 12 50)
+	     (random)
+	     (random)
+	     (* (random) 0.5)
 	     (random 0 1)
 	     (random)
 	     (random)
-	     (random)
-	     (random 10 50)
-	     (random 0 100)
-	     (random 12 50)
-	     (random 0 1)
+	     1.0
 	     (random)
 	     (random)
+	     0
 	     (random)
+	     (random)
+	     (random)
+	     1.0
 	     5.0)
-
 
 0 : begin_x
 1 : begin_y
@@ -39,3 +38,46 @@
 12: end_sfp
 13: end_exp
 14: dur
+
+(io:osc:send (+ (now) (* *second* 0.01))
+	     address
+	     "/Tessellation/Line/"
+	     (random)
+	     (random)
+	     (random)
+	     (random)
+	     (* (random) 0.5)
+	     (random 0 1)
+	     (random)
+	     (random)
+	     (random)
+	     (random)
+	     1.0
+	     (random)
+	     (random)
+	     0
+	     (random)
+	     (random)
+	     (random)
+	     1.0
+	     5.0)
+
+0 : begin_x0
+1 : begin_y0
+2 : begin_x0
+3 : begin_y0
+4 : begin_width
+5 : state
+6 : stp
+7 : sfp
+8 : exp
+9 : end_x0
+10: end_y0
+11: end_x0
+12: end_y0
+12: end_width
+14: end_state
+15: end_stp
+16: end_sfp
+17: end_exp
+18: dur
