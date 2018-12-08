@@ -1,0 +1,6 @@
+
+
+class OscThread : public ofThread {
+  
+
+}

@@ -84,15 +84,18 @@ class tessStaticLine : public Tessellation {
   char state;
   float switch_to_target_state;
   float switch_from_target_state;
+  float exp;
 
   private:
   tessStaticLine *start_state;
-  tessStaticLine *end_stare;
+  tessStaticLine *end_state;
 
   uint64_t start_time;
   uint64_t end_time;
 
 };
 
+float distance_from_center(int x, int y, int center_x, int center_y);
+float distance_from_line(int x, int y, int line_x0, int line_x1, int line_y0, int line_y1);
 
 #endif

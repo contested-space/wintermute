@@ -1,0 +1,41 @@
+
+
+(io:osc:start-server 5000 "osc-receive-5000")
+(define address (cons "localhost" 5000))
+
+
+(io:osc:send (+ (now) (* *second* 0.01))
+	     address
+	     "/Tessellation/Point/"
+	     (random 10 50)
+	     (random 0 100)
+	     (random 12 50)
+	     (random 0 1)
+	     (random)
+	     (random)
+	     (random)
+	     (random 10 50)
+	     (random 0 100)
+	     (random 12 50)
+	     (random 0 1)
+	     (random)
+	     (random)
+	     (random)
+	     5.0)
+
+
+0 : begin_x
+1 : begin_y
+2 : begin_radius
+3 : state
+4 : stp
+5 : sfp
+6 : exp
+7 : end_x
+8 : end_y
+9 : end_radius
+10: end_state
+11: end_stp
+12: end_sfp
+13: end_exp
+14: dur

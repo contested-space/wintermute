@@ -1,6 +1,7 @@
 #pragma once
 
 #include "ofMain.h"
+#include "ofxOsc.h"
 //#define matrix_width 160
 //#define matrix_height 90
 
@@ -29,3 +30,4 @@ class ofApp : public ofBaseApp{
         float mouseXPercent, mouseYPercent;
 };
 	
+void process_osc_message(ofxOscMessage m);

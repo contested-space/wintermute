@@ -3,6 +3,7 @@
 #include "TileMatrix.h"
 #include "Tessellation.h"
 
+#include "ofxOsc.h"
 //const int matrix_width = 320;
 //const int matrix_height= 180;
 
@@ -16,22 +17,42 @@ TileMatrix tile_matrix;
 int horizontal_step;
 int vertical_step;
 
+ofxOscReceiver *receiver = new ofxOscReceiver();
 
 //--------------------------------------------------------------
 void ofApp::setup(){
+  //ofxOscReceiver *receiver = new ofxOscReceiver();  receiver = new ofxOscReceiver();
+  receiver->setup(5000);
+  receiver->start();
+
+  
   //cout << "1"<< endl;
   tile_matrix.setup(matrix_width, matrix_height);
     //cout << "2"<< endl;
   tessStaticPoint *sp = new tessStaticPoint();
     //cout << "3"<< endl;
-  sp->setup(30, 45, 40, Tile::DEAD, 0.1, 0.0, 0.5);
+  sp->setup(30, 45, 40, Tile::ALIVE, 0.1, 0.0, 0.0);
     //cout << "4"<< endl;
   //tessStaticPoint *sp2 = new tessStaticPoint();
   //sp2->setup(240, 45, 20, 1.0);
   tessStaticPoint *np = new tessStaticPoint();
-  np->setup(130, 45, 40, Tile::DEAD, 0.1, 0.0, 0.5);
+  np->setup(130, 45, 40, Tile::ALIVE, 0.1, 0.0, 0.0);
   sp->morph_into(np, 20.0);
   tile_matrix.add_tessellation(sp);
+
+  tessStaticLine *sl = new tessStaticLine();
+  sl->setup(15, 0, 15, 150, 10,  Tile::DEAD, 0.9, 0.1, 0.0);
+  tessStaticLine *nl = new tessStaticLine();
+  nl->setup(150, 0, 15, 150, 10, Tile::DEAD, 0.9, 0.1, 0.0);
+  sl->morph_into(nl, 10.0);
+  tile_matrix.add_tessellation(sl);
+
+  tessStaticLine *sl1 = new tessStaticLine();
+  sl1->setup(150, 90, 15, 90, 1,  Tile::DEAD, 0.9, 0.1, 0.0);
+  tessStaticLine *nl1 = new tessStaticLine();
+  nl1->setup(12, 11, 15, 90, 10, Tile::DEAD, 0.9, 0.1, 0.0);
+  sl1->morph_into(nl1, 20.0);
+  tile_matrix.add_tessellation(sl1);
   // //tile_matrix.add_tessellation(sp2);
 
   // tessStaticPoint *sp1 = new tessStaticPoint();
@@ -117,6 +138,12 @@ void static_point(pixelInfo matrix[][matrix_height],
 */
 //--------------------------------------------------------------
 void ofApp::update(){
+  while (receiver->hasWaitingMessages()){
+    ofxOscMessage m;
+    receiver->getNextMessage(&m);
+    process_osc_message(m);
+    
+  }
   tile_matrix.update();
   //int maxVal = matrix_width * matrix_height;
 
@@ -233,4 +260,30 @@ void ofApp::gotMessage(ofMessage msg){
 //--------------------------------------------------------------
 void ofApp::dragEvent(ofDragInfo dragInfo){ 
 
+}
+
+void process_osc_message(ofxOscMessage m){
+  cout << "Got message: " << m.getAddress() << endl;
+  if (m.getAddress() == "/Tessellation/Point/"){
+    tessStaticPoint * sp = new tessStaticPoint();
+    sp->setup(m.getArgAsInt(0),
+	      m.getArgAsInt(1),
+	      m.getArgAsInt(2),
+	      (m.getArgAsInt(3) == 0 ? Tile::DEAD : Tile::ALIVE),
+	      m.getArgAsFloat(4),
+	      m.getArgAsFloat(5),
+	      m.getArgAsFloat(6));
+    tessStaticPoint * np = new tessStaticPoint();
+    //    np->setup(90, 45, 0, Tile::ALIVE, 0.8, 0.2, 0.0);
+    np->setup(m.getArgAsInt(7),
+	      m.getArgAsInt(8),
+	      m.getArgAsInt(9),
+	      (m.getArgAsInt(10) == 0 ? Tile::DEAD : Tile::ALIVE),
+	      m.getArgAsFloat(11),
+	      m.getArgAsFloat(12),
+	      m.getArgAsFloat(13));
+    sp->morph_into(np, m.getArgAsFloat(14));
+    tile_matrix.add_tessellation(sp);
+    
+  }
 }
