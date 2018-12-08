@@ -48,13 +48,13 @@
       (begin
         (play-note time instr (car evt-lst) (car velo-lst) (car dur-lst))
 	(send-point time 
-		    (point (random) (random) (* (random) 0.5) 0 (random) (random) (random))
-		    (point (random) (random) (* (random) 0.5) 0 (random) (random) (random))
-		    (/ (car dur-lst) 48000.0))
+		    (point (random) (random) (* (random) 0.5) 0 1.0 (random) 0.0)
+		    (point (random) (random) (* (random) 0.5) 0 0.0 0.0 0.0)
+		    (/ (car dur-lst) 44000.0))
 	(send-line time 
 		    (line (random) (random) (random) (random) (* (random) 0.5) 0 (random) (random) (random))
 		    (line (random) (random) (random) (random) (* (random) 0.5) 0 (random) (random) (random))
-		    (/ (car dur-lst) 48000.0))
+		    (/ (car dur-lst) 44000.0))
         (callback (+ time (car dur-lst)) 'play-list (+ time (car dur-lst))
                                                     instr
                                                     (cdr evt-lst)
@@ -64,7 +64,11 @@
 
 (play-note (now) synth0 60 100 10000)
 
-(play-list (now) synth0 '(40 45 47 49) '(48000 48000 48000 48000) '(100 70 80 60))
+(play-list (now) synth0 (list (random 40 45 47 49)
+			      (random 40 45 47 49)
+			      (random 40 45 47 49)
+			      (random 40 45 47 49))
+			      '(440000 440000 440000 440000) '(100 70 80 60))
 
 
 (send-point (now) 
@@ -73,8 +77,8 @@
 	    (/ 48000 48000.0))
 
 (send-line (now)
-	   (line (random) (random) (random) (random) (* (random) 0.5) 0 (random) (random) (random))
-	   (line (random) (random) (random) (random) (* (random) 0.5) 0 (random) (random) (random))
+	   (line (random) (random) (random) (random) (* (random) 0.1) 0 (random) (random) (random))
+	   (line (random) (random) (random) (random) (* (random) 0.1) 0 (random) (random) (random))
 	   	    (/ 48000 48000.0))
 
 (point (random) (random) (* (random) 0.5) 0 (random) (random) (random))

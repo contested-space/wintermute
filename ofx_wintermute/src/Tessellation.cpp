@@ -52,7 +52,7 @@ void tessBackground::setup(Tile** tm, int matrix_width, int matrix_height, int p
 
 void tessBackground::update(Tile** tm, int matrix_width, int matrix_height){
   //  cout <<"background update" << endl;
-  cout <<"pattern: " << pattern << endl;
+  //cout <<"pattern: " << pattern << endl;
   switch(pattern){
     case 0:
       //cout <<"pattern 0" << endl;
@@ -61,7 +61,7 @@ void tessBackground::update(Tile** tm, int matrix_width, int matrix_height){
 	  //tm[i][j].target_state = target_state;
 	  tm[i][j].previous_prob_to = tm[i][j].switch_to_target_probability;
 	  tm[i][j].previous_prob_from = tm[i][j].switch_from_target_probability;
-	  tm[i][j].set_target(Tile::ALIVE, 0.99, 0.0);
+	  tm[i][j].set_target(Tile::ALIVE, 1.0, 1.0);
 	  //tm[i][j].switch_to_target_probability = 1.0;
 	  //tm[i][j].switch_from_target_probability = 0.0;
 	}
@@ -331,16 +331,16 @@ void tessStaticLine::update(Tile** tm, int matrix_width, int matrix_height){
     float new_exp = ofLerp(start_state->exp, end_state->exp, ratio);
 
     int minWidth = MIN(new_x0, new_x1);
-    minWidth = (minWidth - width > 0 ? minWidth - new_width : 0);
+    minWidth = (minWidth - new_width > 0 ? minWidth - new_width : 0);
     //std::cout << minWidth << endl;
     int maxWidth = MAX(new_x0, new_x1);
-    maxWidth = (maxWidth + width < matrix_width ? maxWidth + new_width : matrix_width);
+    maxWidth = (maxWidth + new_width < matrix_width ? maxWidth + new_width : matrix_width);
     //std::cout << maxWidth << endl;
     int minHeight = MIN(new_y0, new_y1);
-    minHeight = (minHeight - width > 0 ? minHeight - new_width : 0);
+    minHeight = (minHeight - new_width > 0 ? minHeight - new_width : 0);
     //std::cout << minHeight << endl;
     int maxHeight = MAX(new_y0, new_y1);
-    maxHeight = (maxHeight + width < matrix_height ? maxHeight + new_width : matrix_height);
+    maxHeight = (maxHeight + new_width < matrix_height ? maxHeight + new_width : matrix_height);
     //std::cout << minHeight << endl;
     for (int i = minWidth; i<maxWidth; i++){
       // step through vertically
