@@ -55,6 +55,7 @@
 		    (line (random) (random) (random) (random) (* (random) 0.5) 0 (random) (random) (random))
 		    (line (random) (random) (random) (random) (* (random) 0.5) 0 (random) (random) (random))
 		    (/ (car dur-lst) 44000.0))
+	(send-background time (random 0 1))
         (callback (+ time (car dur-lst)) 'play-list (+ time (car dur-lst))
                                                     instr
                                                     (cdr evt-lst)
@@ -64,10 +65,10 @@
 
 (play-note (now) synth0 60 100 10000)
 
-(play-list (now) synth0 (list (random 40 45 47 49)
-			      (random 40 45 47 49)
-			      (random 40 45 47 49)
-			      (random 40 45 47 49))
+(play-list (now) synth0 (list (random 40 47 52)
+			      (random 40 47 52)
+			      (random 40 47 52)
+			      (random 40 47 52))
 			      '(440000 440000 440000 440000) '(100 70 80 60))
 
 
@@ -79,10 +80,23 @@
 (send-line (now)
 	   (line (random) (random) (random) (random) (* (random) 0.1) 0 (random) (random) (random))
 	   (line (random) (random) (random) (random) (* (random) 0.1) 0 (random) (random) (random))
-	   	    (/ 48000 48000.0))
+	   (/ 48000 48000.0))
+
+(send-background (now) 0)
+(send-background (now) 1)
+(send-background (now) 2)
+(send-background (now) 3)
+
+
 
 (point (random) (random) (* (random) 0.5) 0 (random) (random) (random))
 
+(define send-background
+  (lambda (time pattern)
+    (io:osc:send time
+		 address
+		 "/Tessellation/Background/"
+		 pattern)))
 
 (define send-point
   (lambda (time pt0 pt1 dur)

@@ -174,34 +174,34 @@ void ofApp::draw(){
 //--------------------------------------------------------------
 void ofApp::keyPressed  (int key){
   if (loop == 0){
-    tile_matrix.background.pattern = 0;
-    tile_matrix.clear_tessellations();
-    tessStaticPoint *sp1 = new tessStaticPoint();
-    sp1->setup(145, 45, 20, Tile::ALIVE , 0.01, 0.01, 1.0);
-    //tessStaticPoint *sp2 = new tessStaticPoint();
-    //sp2->setup(240, 45, 20, 1.0);
-    tessStaticPoint *np1 = new tessStaticPoint();
-    np1->setup(80 , 45, 10, Tile::ALIVE , 0.001, 0.1, 0.7);
-    sp1->morph_into(np1, 7.0);
-    tile_matrix.add_tessellation(sp1);
+    tile_matrix.background.pattern = 1;
+    // tile_matrix.clear_tessellations();
+    // tessStaticPoint *sp1 = new tessStaticPoint();
+    // sp1->setup(145, 45, 20, Tile::ALIVE , 0.01, 0.01, 1.0);
+    // //tessStaticPoint *sp2 = new tessStaticPoint();
+    // //sp2->setup(240, 45, 20, 1.0);
+    // tessStaticPoint *np1 = new tessStaticPoint();
+    // np1->setup(80 , 45, 10, Tile::ALIVE , 0.001, 0.1, 0.7);
+    // sp1->morph_into(np1, 7.0);
+    // tile_matrix.add_tessellation(sp1);
 
-    tessStaticPoint *sp2 = new tessStaticPoint();
-    sp2->setup(15, 45, 10, Tile::ALIVE , 0.01, 0.1, 0.0);
-    //tessStaticPoint *sp2 = new tessStaticPoint();
-    //sp2->setup(240, 45, 20, 1.0);
-    tessStaticPoint *np2 = new tessStaticPoint();
-    np2->setup(80, 45, 10, Tile::ALIVE , 0.01, 0.1, 1.0);
-    sp2->morph_into(np2, 7.0);
-    tile_matrix.add_tessellation(sp2);
+    // tessStaticPoint *sp2 = new tessStaticPoint();
+    // sp2->setup(15, 45, 10, Tile::ALIVE , 0.01, 0.1, 0.0);
+    // //tessStaticPoint *sp2 = new tessStaticPoint();
+    // //sp2->setup(240, 45, 20, 1.0);
+    // tessStaticPoint *np2 = new tessStaticPoint();
+    // np2->setup(80, 45, 10, Tile::ALIVE , 0.01, 0.1, 1.0);
+    // sp2->morph_into(np2, 7.0);
+    // tile_matrix.add_tessellation(sp2);
 
-    tessStaticPoint *sp3 = new tessStaticPoint();
-    sp3->setup(80, 45, 0, Tile::ALIVE , 0.01, 0.1, 0.0);
-    //tessStaticPoint *sp2 = new tessStaticPoint();
-    //sp2->setup(240, 45, 20, 1.0);
-    tessStaticPoint *np3 = new tessStaticPoint();
-    np3->setup(80, 45, 45, Tile::ALIVE , 0.5, 0.5, 1.0);
-    sp3->morph_into(np3, 15.0);
-    tile_matrix.add_tessellation(sp3);
+    // tessStaticPoint *sp3 = new tessStaticPoint();
+    // sp3->setup(80, 45, 0, Tile::ALIVE , 0.01, 0.1, 0.0);
+    // //tessStaticPoint *sp2 = new tessStaticPoint();
+    // //sp2->setup(240, 45, 20, 1.0);
+    // tessStaticPoint *np3 = new tessStaticPoint();
+    // np3->setup(80, 45, 45, Tile::ALIVE , 0.5, 0.5, 1.0);
+    // sp3->morph_into(np3, 15.0);
+    // tile_matrix.add_tessellation(sp3);
 
     
     loop = 1;
@@ -264,6 +264,9 @@ void ofApp::dragEvent(ofDragInfo dragInfo){
 
 void process_osc_message(ofxOscMessage m){
   cout << "Got message: " << m.getAddress() << endl;
+  if (m.getAddress() == "/Tessellation/Background/") {
+    tile_matrix.background.pattern = m.getArgAsInt(0);
+  }
   if (m.getAddress() == "/Tessellation/Point/"){
     tessStaticPoint * sp = new tessStaticPoint();
     sp->setup((int) floor(m.getArgAsFloat(0) * matrix_width),

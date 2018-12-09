@@ -54,34 +54,70 @@ void tessBackground::update(Tile** tm, int matrix_width, int matrix_height){
   //  cout <<"background update" << endl;
   //cout <<"pattern: " << pattern << endl;
   switch(pattern){
-    case 0:
-      //cout <<"pattern 0" << endl;
-      for (int i = 0; i < matrix_width; i++){
-	for (int j = 0; j < matrix_height; j++){
-	  //tm[i][j].target_state = target_state;
-	  tm[i][j].previous_prob_to = tm[i][j].switch_to_target_probability;
-	  tm[i][j].previous_prob_from = tm[i][j].switch_from_target_probability;
-	  tm[i][j].set_target(Tile::ALIVE, 1.0, 1.0);
-	  //tm[i][j].switch_to_target_probability = 1.0;
-	  //tm[i][j].switch_from_target_probability = 0.0;
+  case 0:
+    //cout <<"pattern 0" << endl;
+    for (int i = 0; i < matrix_width; i++){
+      for (int j = 0; j < matrix_height; j++){
+	//tm[i][j].target_state = target_state;
+	tm[i][j].previous_prob_to = tm[i][j].switch_to_target_probability;
+	tm[i][j].previous_prob_from = tm[i][j].switch_from_target_probability;
+	tm[i][j].set_target(Tile::ALIVE, 0.0, 0.0);
+	//tm[i][j].switch_to_target_probability = 1.0;
+	//tm[i][j].switch_from_target_probability = 0.0;
+      }
+    }
+    break;
+  case 1:
+    for (int i = 0; i < matrix_width; i++){
+      for (int j = 0; j < matrix_height; j++){
+	//tm[i][j].target_state = target_state;
+	tm[i][j].previous_prob_to = tm[i][j].switch_to_target_probability;
+	tm[i][j].previous_prob_from = tm[i][j].switch_from_target_probability;
+	tm[i][j].set_target(Tile::ALIVE, 0.3, 0.3);
+	//tm[i][j].switch_to_target_probability = 1.0;
+	//tm[i][j].switch_from_target_probability = 0.0;
+	//tm[i][j].target_state = Tile::ALIVE;
+	////cout << "1.1.1.2" << i << endl;
+	////cout << "1.1.1.3" << j << endl;
+      }
+    }
+    break;
+
+  case 2:
+    for (int i = 0; i < matrix_width; i++){
+      for (int j = 0; j < matrix_height; j++){
+	//tm[i][j].target_state = target_state;
+	tm[i][j].previous_prob_to = tm[i][j].switch_to_target_probability;
+	tm[i][j].previous_prob_from = tm[i][j].switch_from_target_probability;
+	if ((i + j) % 2 == 0) {
+	  tm[i][j].set_target(Tile::ALIVE, 0.9, 0.0);
+	}
+	else {
+	  tm[i][j].set_target(Tile::DEAD, 0.9, 0.0);
 	}
       }
-      break;
-    case 1:
-      for (int i = 0; i < matrix_width; i++){
-	for (int j = 0; j < matrix_height; j++){
-	  //tm[i][j].target_state = target_state;
-	  tm[i][j].previous_prob_to = tm[i][j].switch_to_target_probability;
-	  tm[i][j].previous_prob_from = tm[i][j].switch_from_target_probability;
-	  tm[i][j].set_target(Tile::ALIVE, 0.0, 0.0);
-	  //tm[i][j].switch_to_target_probability = 1.0;
-	  //tm[i][j].switch_from_target_probability = 0.0;
-	  //tm[i][j].target_state = Tile::ALIVE;
-	  ////cout << "1.1.1.2" << i << endl;
-	  ////cout << "1.1.1.3" << j << endl;
-	}
     }
-
+    break;
+  case 3:
+    for (int i = 0; i < matrix_width; i++){
+      for (int j = 0; j < matrix_height; j++){
+	//tm[i][j].target_state = target_state;
+	tm[i][j].previous_prob_to = tm[i][j].switch_to_target_probability;
+	tm[i][j].previous_prob_from = tm[i][j].switch_from_target_probability;
+	if (i  % 2 == 0) {
+	  tm[i][j].set_target(Tile::ALIVE, 0.7, 0.0);
+	}
+	else {
+	  tm[i][j].set_target(Tile::DEAD, 0.7, 0.0);
+	}
+	//tm[i][j].switch_to_target_probability = 1.0;
+	//tm[i][j].switch_from_target_probability = 0.0;
+	//tm[i][j].target_state = Tile::ALIVE;
+	////cout << "1.1.1.2" << i << endl;
+	////cout << "1.1.1.3" << j << endl;
+      }
+    }
+    break;
   }
 }
 
