@@ -1,206 +1,692 @@
 
-(sys:load "/libs/core/instruments.xtm")
-
-
-(make-instrument synth0 fmsynth)
-(io:osc:start-server 5000 "osc-receive-5000")
-(define address (cons "localhost" 5000))
-
-
-(bind-func dsp:DSP
-  (lambda (in time chan dat)
-    (* 0.5 (synth0 in time chan dat))))
-
 (dsp:set! dsp)
-
-(define play-list
-  (lambda (time instr evt-lst dur-lst velo-lst)
-    (if (not (eq? '() evt-lst))
-      (begin
-        (play-note time instr (car evt-lst) (car velo-lst) (car dur-lst))
-	(io:osc:send time 
-	     address
-	     "/Tessellation/Point/"
-	     (random)
-	     (random)
-	     (* (random) 0.5)
-	     0
-	     (random)
-	     (random)
-	     (random)
-	     (random)
-	     (random)
-	     (random)
-	     0
-	     (random)
-	     (random)
-	     (random)
-	     (/ (car dur-lst) 48000.0))
-        (callback (+ time (car dur-lst)) 'play-list (+ time (car dur-lst))
-                                                    instr
-                                                    (cdr evt-lst)
-                                                    (cdr dur-lst)
-						    (cdr velo-lst))))))
-
-(define play-list
-  (lambda (time instr evt-lst dur-lst velo-lst)
-    (if (not (eq? '() evt-lst))
-      (begin
-        (play-note time instr (car evt-lst) (car velo-lst) (car dur-lst))
-	(send-point time 
-		    (point (random) (random) (* (random) 0.5) 0 (random) (random) (random))
-		    (point (random) (random) (* (random) 0.5) 0 (random) (random) (random))
-		    (/ (car dur-lst) 48000.0))
-	(send-line time 
-		    (line (random) (random) (random) (random) (* (random) 0.5) 0 (random) (random) (random))
-		    (line (random) (random) (random) (random) (* (random) 0.5) 0 (random) (random) (random))
-		    (/ (car dur-lst) 48000.0))
-        (callback (+ time (car dur-lst)) 'play-list (+ time (car dur-lst))
-                                                    instr
-                                                    (cdr evt-lst)
-                                                    (cdr dur-lst)
-						    (cdr velo-lst))))))
-
-
-(play-note (now) synth0 60 100 10000)
-
-(play-list (now) synth0 '(40 45 47 49) '(48000 48000 48000 48000) '(100 70 80 60))
-
-
-(send-point (now) 
-	    (point (random) (random) (* (random) 0.5) 0 (random) (random) (random))
-	    (point (random) (random) (* (random) 0.5) 0 (random) (random) (random))
-	    (/ 48000 48000.0))
-
-(send-line (now)
-	   (line (random) (random) (random) (random) (* (random) 0.5) 0 (random) (random) (random))
-	   (line (random) (random) (random) (random) (* (random) 0.5) 0 (random) (random) (random))
-	   	    (/ 48000 48000.0))
-
-(point (random) (random) (* (random) 0.5) 0 (random) (random) (random))
-
-
-(define send-point
-  (lambda (time pt0 pt1 dur)
-    (io:osc:send time 
-		 address
-		 "/Tessellation/Point/"
-		 (point-x pt0)
-		 (point-y pt0)
-		 (point-radius pt0)
-		 (point-state pt0)
-		 (point-sfp pt0)
-		 (point-stp pt0)
-		 (point-expr pt0)
-		 (point-x pt1)
-		 (point-y pt1)
-		 (point-radius pt1)
-		 (point-state pt1)
-		 (point-sfp pt1)
-		 (point-stp pt1)
-		 (point-expr pt1)
-		 dur)))
-
-
-(define send-line
-  (lambda (time ln0 ln1 dur)
-    (io:osc:send time 
-		 address
-		 "/Tessellation/Line/"
-		 (line-x0 ln0)
-		 (line-y0 ln0)
-		 (line-x1 ln0)
-		 (line-y1 ln0)
-		 (line-width ln0)
-		 (line-state ln0)
-		 (line-sfp ln0)
-		 (line-stp ln0)
-		 (line-expr ln0)
-		 (line-x0 ln1)
-		 (line-y0 ln1)
-		 (line-x1 ln0)
-		 (line-y1 ln0)
-		 (line-width ln1)
-		 (line-state ln1)
-		 (line-sfp ln1)
-		 (line-stp ln1)
-		 (line-expr ln1)
-		 dur)))
+(section3 (now))
 
 (begin
+  ;(sys:load "/libs/core/instruments.xtm")
+  (sys:load "libs/external/instruments_ext.xtm")
+
+  (sys:load "/home/fabien/code/wintermute/xtm_wintermute/fablib.xtm")
+
+  (make-instrument drum sampler)
 
 
-  (define point
-    (lambda (x y radius state stp sfp expr)
-      (list x y radius state stp sfp expr)))
+  (define misc-path "/home/fabien/Downloads/Vintage Drum Samples 24bit/Ace Tone Rhythm Ace/")
+  (set-sampler-index drum (string-append misc-path "KICK1.WAV") 10 0 0 0 1)
+  (set-sampler-index drum (string-append misc-path "SNARE2.WAV") 11 0 0 0 1)
+  (set-sampler-index drum (string-append misc-path "PERC3.WAV") 12 0 0 0 1)
+  (set-sampler-index drum (string-append misc-path "CLAVE.WAV") 13 0 0 0 1)
+  (make-instrument synth0 fmsynth)
+  (io:osc:start-server 5000 "occsc-receive-5000")
+  (define address (cons "localhost" 5000))
 
-  (define point-x
-    (lambda (pt)
-      (list-ref pt 0)))
 
-  (define point-y
-    (lambda (pt)
-      (list-ref pt 1)))
+  (bind-func dsp:DSP
+    (lambda (in time chan dat)
+      ( + (* 1.0  (synth0 in time chan dat))
+	  (* 1.0 (drum in time chan dat)))))
 
-  (define point-radius
-    (lambda (pt)
-      (list-ref pt 2)))
+)
 
-  (define point-state
-    (lambda (pt)
-      (list-ref pt 3)))
+					;(play-note (now) drum 12 120 44100)
 
-  (define point-stp
-    (lambda (pt)
-      (list-ref pt 4)))
+					;(print *samplerate*)
 
-  (define point-sfp
-    (lambda (pt)
-      (list-ref pt 5)))
 
-  (define point-expr
-    (lambda (pt)
-      (list-ref pt 6)))
+(begin 
+  
+  (define section0
+    (lambda (time)
+      (let ((dur (* *samplerate* 15)))
+	(begin
+	  (send-background time 7)
+	  (play-note time synth0 45 80 dur)
+	  (play-note time synth0 52 80 dur)
+	  (play-note (+ (* 0 (/ dur 3)) time) synth0 59 80 (* 1(/ dur 3)))
+	  (play-note (+ (* 1 (/ dur 3)) time) synth0 60 80 (* 2 (/ dur 3)))
+	  (send-line time
+		     (line 0.0 0.5 1.0 0.5 1.0 0 0.9 0.01 0.0)
+		     (line 0.0 0.5 1.0 0.5 1.0 0 0.9 0.1 1.0)
+		     (/ dur *second*))
+	  (callback (+ time dur) section1 (+ time dur))))))
 
-  (define line
-    (lambda (x0 y0 x1 y1 width state stp sfp expr)
-      (list x0 y0 x1 y1 width state stp sfp expr)))
 
-  (define line-x0
-    (lambda (ln)
-      (list-ref ln 0)))
+  (define section1
+    (lambda (time)
+      (let ((dur (* *second* 15)))
+	(play-note time drum 10 110 44100)
+	(play-note time synth0 47 80 dur)
+	(play-note time synth0 55 80 dur)
+	(play-note time synth0 62 80 dur)
+	(send-background time 1)
+	(send-point time
+		    (point 0.5 0.5 0.45 1 0.99 0.01 0.0)
+		    (point 0.5 0.5 0.45 1 0.01 0.1 0.0)
+		    (/ dur *second*))
+	(callback (+ time dur) section2 (+ time dur)))))
 
-  (define line-y0
-    (lambda (ln)
-      (list-ref ln 1)))
 
-  (define line-x1
-    (lambda (ln)
-      (list-ref ln 2)))
+					;(send-background (now) 0)
 
-  (define line-y1
-    (lambda (ln)
-      (list-ref ln 3)))
+  (define section2
+    (lambda (time)
+      (let* ((dur (* *second* 30))
+	     (nb-iter 15)
+	     (evt-lst (list 12 12 12))
+	     (dur-lst (list-of-constant (length evt-lst) (/ dur (* nb-iter (length evt-lst)))))
+	     (velo-lst (list-of-constant (length evt-lst) 80))
+	     (point-lst (point-sequence (* nb-iter (length evt-lst))
+					(point 0.5 0.5 0.45 1 0.0 0.1 0.0)
+					(point 0.33 0.5 0.10 1  1.0 1.0 0.01))))
+	(begin
+	  (walking-point-beat time 0.05 0.2 (* nb-iter (length evt-lst)) dur)
+	  (send-background time 3)
+	  (play-melo-line time drum (repeat-list evt-lst nb-iter)
+			  (repeat-list dur-lst nb-iter)
+			  (repeat-list velo-lst nb-iter)
+			  point-lst)
+	  (play-note time synth0 49 80 dur)
+	  (play-note time synth0 52 80 dur)
+	  (play-note time synth0 57 80 dur)
+	  (callback (+ time dur) section3 (+ time dur))))))
 
-  (define line-width
-    (lambda (ln)
-      (list-ref ln 4)))
 
-  (define line-state
-    (lambda (ln)
-      (list-ref ln 5)))
 
-  (define line-stp
-    (lambda (ln)
-      (list-ref ln 6)))
+  (define section3
+    (lambda (time)
+      (let* ((dur (* *second* 30))
+	     (nb-iter 15)
+	     (evt-lst (list 53  55 59))
+	     (evt-lst2 (list 12  12 12))
+	     (dur-lst (list-of-constant (length evt-lst) (/ dur (* nb-iter (length evt-lst)))))
+	     (velo-lst (list-of-constant (length evt-lst) 80))
+	     (point-lst (point-sequence (* nb-iter (length evt-lst))
+					(point 0.33 0.5 0.10 1  1.0 1.0 0.01)
+					(point 0.67 0.5 0.10 0  1.0 0.0 0.0))))
+	(begin
+	  (send-background time 2)
+	  (walking-point-beat time 0.2 0.2 (* nb-iter (length evt-lst)) dur)
+	  (background-beat-sequence time drum
+				    (repeat-list (list-of-constant (length evt-lst) 10) (/ nb-iter 3))
+				    (repeat-list (list-of-constant (length evt-lst) 120) (/ nb-iter 3))
+				    (repeat-list (list-of-constant (length evt-lst)
+								   (* 3 (/ dur (* nb-iter (length evt-lst))))) (/ nb-iter 3))
+				    1
+				    8)
+	  (send-point time
+		      (point 0.67 0.16 0.1 0 0.01 0.01 0.0)
+		      (point 0.67 0.5 0.4 0 0.01 0.01 0.0)
+		      (/ dur *second*))
+	  (play-melo-line time drum (repeat-list evt-lst2 nb-iter)
+			  (repeat-list dur-lst nb-iter)
+			  (repeat-list velo-lst nb-iter)
+			  point-lst)
+	  ;; (play-melo-line time synth0 (repeat-list evt-lst nb-iter)
+	  ;; 		(repeat-list dur-lst nb-iter)
+	  ;; 		(repeat-list velo-lst nb-iter)
+	  ;; 		point-lst)
+	  (play-note time synth0 43 80 dur)
+	  (play-note time synth0 59 80 dur)
+	  (play-note time synth0 62 80 dur)
+	  (callback (+ time dur) section4 (+ time dur))))))
+					;(send-background (now) 7)
 
-  (define line-sfp
-    (lambda (ln)
-      (list-ref ln 7)))
+  (define section4
+    (lambda (time)
+      (let* ((dur (* *second* 30))
+	     (nb-iter 15)
+	     (evt-lst (list 52 55 60))
+	     (dur-lst (list-of-constant (length evt-lst) (/ dur (* nb-iter (length evt-lst)))))
+	     (velo-lst (list-of-constant (length evt-lst) 80))
+	     (point-lst (point-sequence (* nb-iter (length evt-lst))
+					(point 0.5 0.5 0.5 0  0.5 0.01 0.0)
+					(point 0.33 0.5 0.1 0  0.9 0.01 1.0))))
+	(begin
+	  (send-background time 7)
+	  (background-beat-sequence time drum
+				    (repeat-list (list-of-constant (length evt-lst) 10) (/ nb-iter 3))
+				    (repeat-list (list-of-constant (length evt-lst) 120) (/ nb-iter 3))
+				    (repeat-list (list-of-constant (length evt-lst)
+								   (* 3 (/ dur (* nb-iter (length evt-lst))))) (/ nb-iter 3))
+				    7
+				    6)
+	  (horizontal-stack time 0.67 1.0 0.1 nb-iter dur)
+	  (play-melo-line time synth0 (repeat-list evt-lst nb-iter)
+			  (repeat-list dur-lst nb-iter)
+			  (repeat-list velo-lst nb-iter)
+			  point-lst)
+	  
+	  (play-note time synth0 36 80 dur)
+	  (play-note time synth0 55 80 dur)
+	  (play-note time synth0 52 80 dur)
+	  (callback (+ time dur) section5 (+ time dur))))))
 
-  (define line-expr
-    (lambda (ln)
-      (list-ref ln 8)))
+  (define section5
+    (lambda (time)
+      (let* ((dur (* *second* 30))
+	     (nb-iter 15)
+	     (evt-lst (list 45 43 39))
+	     (dur-lst (list-of-constant (length evt-lst) (/ dur (* nb-iter (length evt-lst)))))
+	     (velo-lst (list-of-constant (length evt-lst) 80))
+	     (point-lst (point-sequence (* nb-iter (length evt-lst))
+					(point 0.33 0.5 0.1 0  0.9 0.01 1.0)
+					(point 0.5 0.5 0.2 0  0.0 0.01 0.0))))
+	(begin
+	  (send-background time 7)
+	  (background-beat-sequence time drum
+				    (repeat-list (list-of-constant (length evt-lst) 10) (/ nb-iter 3))
+				    (repeat-list (list-of-constant (length evt-lst) 120) (/ nb-iter 3))
+				    (repeat-list (list-of-constant (length evt-lst)
+								   (* 3 (/ dur (* nb-iter (length evt-lst))))) (/ nb-iter 3))
+				    7
+				    6)
+	  (horizontal-stack time 0.33 0.67 0.1 nb-iter dur)
+	  (play-melo-line time synth0 (repeat-list evt-lst nb-iter)
+			  (repeat-list dur-lst nb-iter)
+			  (repeat-list velo-lst nb-iter)
+			  point-lst)
+	  
+	  (play-note time synth0 43 80 dur)
+	  (play-note time synth0 59 80 dur)
+	  (play-note time synth0 52 80 dur)
+	  (callback (+ time dur) section6 (+ time dur))))))
+
+  (define section6
+    (lambda (time)
+      (let* ((dur (* *second* 30))
+	     (nb-iter 15)
+	     (evt-lst (list 45 43 41))
+	     (dur-lst (list-of-constant (length evt-lst) (/ dur (* nb-iter (length evt-lst)))))
+	     (velo-lst (list-of-constant (length evt-lst) 80))
+	     (point-lst (point-sequence (* nb-iter (length evt-lst))
+					(point 0.33 0.5 0.0 0  0.9 0.01 1.0)
+					(point 0.5 0.5 0.0 0  0.0 0.01 0.0))))
+	(begin
+	  (send-background time 7)
+	  (walking-point-beat time 0.1 0.1 (* nb-iter (length evt-lst)) dur)
+	  (background-beat-sequence time drum
+				    (repeat-list (list-of-constant (length evt-lst) 10) (/ nb-iter 3))
+				    (repeat-list (list-of-constant (length evt-lst) 120) (/ nb-iter 3))
+				    (repeat-list (list-of-constant (length evt-lst)
+								   (* 3 (/ dur (* nb-iter (length evt-lst))))) (/ nb-iter 3))
+				    5
+				    6)
+	  (horizontal-stack time 0.33 0.67 0.1 nb-iter dur)
+	  (horizontal-stack time 0.0 0.33 0.1 nb-iter dur)
+	  (horizontal-stack time 0.67 1.0 0.1 nb-iter dur)
+	  (play-melo-line time synth0 (repeat-list evt-lst nb-iter)
+			  (repeat-list dur-lst nb-iter)
+			  (repeat-list velo-lst nb-iter)
+			  point-lst)
+	  
+	  (play-note time synth0 33 80 (* 1 (/ dur 3)))
+	  (play-note time synth0 60 80 (* 1 (/ dur 3)))
+	  (play-note time synth0 53 80 (* 1 (/ dur 3)))
+	  (play-note (+ time (/ dur 3)) synth0 33 80 (* 1 (/ dur 3)))
+	  (play-note (+ time (/ dur 3)) synth0 62 80 (* 1 (/ dur 3)))
+	  (play-note (+ time (/ dur 3)) synth0 53 80 (* 1 (/ dur 3)))
+	  (play-note (+ time (* 2 (/ dur 3))) synth0 45 80 (* 1 (/ dur 3)))
+	  (play-note (+ time (* 2 (/ dur 3))) synth0 60 80 (* 1 (/ dur 3)))
+	  (play-note (+ time (* 2 (/ dur 3))) synth0 53 80 (* 1 (/ dur 3)))
+	  (callback (+ time dur) section7 (+ time dur))))))
+
+  (define section7
+    (lambda (time)
+      (let* ((dur (* *second* 10))
+	     (nb-iter 5)
+	     (evt-lst (list 45 43 41))
+	     (dur-lst (list-of-constant (length evt-lst) (/ dur (* nb-iter (length evt-lst)))))
+	     (velo-lst (list-of-constant (length evt-lst) 80))
+	     (point-lst (point-sequence (* nb-iter (length evt-lst))
+					(point 0.33 0.5 0.0 0  0.9 0.01 1.0)
+					(point 0.5 0.5 0.0 0  0.0 0.99 0.0))))
+	(play-note time drum 10 110 44100)
+	(play-note time synth0 45 80 dur)
+	(play-note time synth0 52 80 dur)
+	(play-note time synth0 60 80 dur)
+	(send-background time 6)
+	(background-beat-sequence time drum
+				  (repeat-list (list-of-constant (length evt-lst) 10) (/ nb-iter 3))
+				  (repeat-list (list-of-constant (length evt-lst) 120) (/ nb-iter 3))
+				  (repeat-list (list-of-constant (length evt-lst)
+								 (* 3 (/ dur (* nb-iter (length evt-lst))))) (/ nb-iter 3))
+				  0
+				  1)
+	(send-point time
+		    (point 0.5 0.5 0.45 1 0.99 0.01 0.0)
+		    (point 0.5 0.5 0.45 1 0.01 0.9 0.0)
+		    (/ dur *second*))
+	(callback (+ time dur) section8 (+ time dur)))))
+
+  (define section8
+    (lambda (time)
+      (send-background time 4)))
+  
+  (define discrete-lerp
+    (lambda (begin-val end-val index total)
+      (+ begin-val (* (/ index total)  (- end-val begin-val)))))
+
+
+
+  (define point-sequence-in
+    (lambda (nb-points first-point last-point index lst)
+      (if (= index 0)
+	  lst
+	  (point-sequence-in nb-points
+			     first-point
+			     last-point
+			     (- index 1)
+			     (cons (point (discrete-lerp (point-x first-point)
+							 (point-x last-point)
+							 index
+							 nb-points)
+					  (discrete-lerp (point-y first-point)
+							 (point-y last-point)
+							 index
+							 nb-points)
+					  (discrete-lerp (point-radius first-point)
+							 (point-radius last-point)
+							 index
+							 nb-points)
+					  (point-state last-point)
+					  (discrete-lerp (point-stp first-point)
+							 (point-stp last-point)
+							 index
+							 nb-points)
+					  (discrete-lerp (point-sfp first-point)
+							 (point-sfp last-point)
+							 index
+							 nb-points)
+					  (discrete-lerp (point-expr first-point)
+							 (point-expr last-point)
+							 index
+							 nb-points))
+				   lst)))))
+
+  (define point-sequence
+    (lambda (nb-points first-point last-point)
+      (point-sequence-in (+ nb-points 0) first-point last-point (+ nb-points 0) (cons last-point '()))))
+  
+
+  (define play-melo-line
+    (lambda (time instr evt-lst dur-lst velo-lst point-lst)
+      (if (not (eq? '() evt-lst))
+	  (begin
+	    (play-note time instr (car evt-lst) (car velo-lst) (car dur-lst))
+	    (send-point time (car point-lst) (car (cdr point-lst)) (/ (car dur-lst) *second*))
+	    (callback (+ time (car dur-lst)) 'play-melo-line (+ time (car dur-lst))
+		      instr
+		      (cdr evt-lst)
+		      (cdr dur-lst)
+		      (cdr velo-lst)
+		      (cdr point-lst))))))
+
+  (define play-melo-line-2
+    (lambda (time instr evt-lst dur-lst velo-lst point-lst)
+      (if (not (eq? '() evt-lst))
+	  (begin
+	    (play-note time instr (car evt-lst) (car velo-lst) (car dur-lst))
+	    (send-point time (car point-lst) (car (cdr point-lst)) (/ (car dur-lst) *second*))
+	    (send-line time
+		       (line (point-x (car point-lst))
+			     (point-y (car point-lst))
+			     (point-x (car (cdr point-lst)))
+			     (point-y (car (cdr point-lst)))
+			     0.1
+			     (point-state (car point-lst))
+			     1.0
+			     (point-sfp (car point-lst))
+			     (point-expr (car point-lst)))
+		       (line 0.0
+			     0.0
+			     1.0
+			     1.0
+			     0.1
+			     (point-state (car point-lst))
+			     (point-stp (car point-lst))
+			     (point-sfp (car point-lst))
+			     (point-expr (car point-lst)))
+		       (/ (car dur-lst) *second*))
+	    
+	    (callback (+ time (car dur-lst)) 'play-melo-line-2 (+ time (car dur-lst))
+		      instr
+		      (cdr evt-lst)
+		      (cdr dur-lst)
+		      (cdr velo-lst)
+		      (cdr point-lst))))))
+
+  (define background-beat-sequence
+    (lambda (time instr evt-lst velo-lst dur-lst pattern0 pattern1)
+      (if (not (eq? '() evt-lst))
+	  (begin
+	    (play-note time instr (car evt-lst) (car velo-lst) (car dur-lst))
+	    (background-beat time pattern0 pattern1 (/ (car dur-lst) 4))
+	    (callback (+ time (car dur-lst))
+		      'background-beat-sequence
+		      (+ time (car dur-lst))
+		      instr
+		      (cdr evt-lst)
+		      (cdr velo-lst)
+		      (cdr dur-lst)
+		      pattern0
+		      pattern1)))))
+
+  (define background-beat
+    (lambda (time pattern0 pattern1 dur)
+      (begin
+	(send-background time pattern1)
+	(send-background (+ time dur) pattern0))))
+  
+
+  (define walking-point
+    (lambda (time starting-point step-size step-dur nb-steps)
+      (begin
+	(if (>= nb-steps 0)
+	    (let ((new-point (if (and (= (random 2) 0)
+				      (>= (- (point-x starting-point) step-size) 0)
+				      (< (+ (point-x starting-point) step-size) 1.0))
+				 (point (+ (point-x starting-point) (* (random (list -1 1)) step-size))
+					(point-y starting-point)
+					(point-radius starting-point)
+					(point-state starting-point)
+					(point-stp starting-point)
+					(point-sfp starting-point)
+					(point-expr starting-point))
+				 
+				 (if  (and (= (random 2) 0)
+					   (>= (- (point-y starting-point) step-size) 0)
+					   (< (+ (point-y starting-point) step-size) 1.0))
+				      (point (point-x starting-point)
+					     (+ (point-y starting-point) (* (random (list -1 1)) step-size))
+					     (point-radius starting-point)
+					     (point-state starting-point)
+					     (point-stp starting-point)
+					     (point-sfp starting-point)
+					     (point-expr starting-point))
+				      starting-point))))
+	      ;;(print new-point)
+	      (send-point time starting-point new-point (/ step-dur *second*))
+	      (callback (+ time step-dur)
+			'walking-point
+			(+ time step-dur)
+			new-point
+			step-size
+			step-dur
+			(- nb-steps 1)))))))
+
+  (define walking-point-beat
+    (lambda (time max-size step-size nb-steps dur)
+      (if (> nb-steps 0)
+	  (begin
+	    (walking-point time (random-point max-size) step-size (/ dur nb-steps) nb-steps)
+	    (callback (+ time (/ dur nb-steps))
+		      'walking-point-beat
+		      (+ time (/ dur nb-steps))
+		      max-size
+		      step-size
+		      (- nb-steps 1)
+		      (- dur (/ dur nb-steps)))))))
+  ;;add y-offset
+
+  (define horizontal-stack
+    (lambda (time min-x max-x max-width  nb-steps dur)
+      (if (> nb-steps 0)
+	  (begin
+	    (let ((y0 (random)) (y1 (random)) (width (*(random) max-width)))
+	      (send-line time
+			 (line min-x
+			       y0
+			       max-x
+			       y0
+			       width
+			       (random (list 0 1))
+			       (random)
+			       (random)
+			       (random))
+			 (line min-x
+			       y1
+			       max-x
+			       y1
+			       width
+			       (random (list 0 1))
+			       (random)
+			       (random)
+			       (random))
+			 (/ (* (random) dur) *second*))
+	      (callback (+ time (/ dur nb-steps))
+			'horizontal-stack
+			(+ time (/ dur nb-steps))
+			min-x
+			max-x
+			max-width
+			(- nb-steps 1)
+			(- dur (/ dur nb-steps))))))))
+  
+
+					;(horizontal-stack (now) 0.5 1.0 0.1 10 (* 10 *second*))
+
+					;(* (random) 0.1)
+
+					;(= (random 2) 0)			
+
+					;(random-point 0.1)
+
+					;(walking-point (now) (random-point 0.1) 0.1 (/ *second* 4) 20)
+
+					;(walking-point-beat (now) 0.01 0.1  80 (* *second* 20))
+
+  (define random-point
+    (lambda (max-radius)
+      (point (random)
+	     (random)
+	     (* (random) max-radius)
+	     (random 2)
+	     (random)
+	     (random)
+	     (random))))
+
+					;(random-point 0.1)
+
+					;(random (list -1 1))
+  
+
+
+					;(walking-point (now) 0.1 
+  
+					;(get-last (list 1 2 3))
+
+  (define play-list
+    (lambda (time instr evt-lst dur-lst velo-lst)
+      (if (not (eq? '() evt-lst))
+	  (begin
+	    (play-note time instr (car evt-lst) (car velo-lst) (car dur-lst))
+	    (io:osc:send time 
+			 address
+			 "/Tessellation/Point/"
+			 (random)
+			 (random)
+			 (* (random) 0.5)
+			 0
+			 (random)
+			 (random)
+			 (random)
+			 (random)
+			 (random)
+			 (random)
+			 0
+			 (random)
+			 (random)
+			 (random)
+			 (/ (car dur-lst) 48000.0))
+	    (callback (+ time (car dur-lst)) 'play-list (+ time (car dur-lst))
+		      instr
+		      (cdr evt-lst)
+		      (cdr dur-lst)
+		      (cdr velo-lst))))))
+
+  (define play-list
+    (lambda (time instr evt-lst dur-lst velo-lst)
+      (if (not (eq? '() evt-lst))
+	  (begin
+	    (play-note time instr (car evt-lst) (car velo-lst) (car dur-lst))
+	    (send-point time 
+			(point (random) (random) (* (random) 0.5) 0 (random) (random) (random))
+			(point (random) (random) (* (random) 0.5) 0 (random) (random) (random))
+			(/ (car dur-lst) 48000.0))
+	    (send-line time 
+		       (line (random) (random) (random) (random) (* (random) 0.5) 0 (random) (random) (random))
+		       (line (random) (random) (random) (random) (* (random) 0.5) 0 (random) (random) (random))
+		       (/ (car dur-lst) 48000.0))
+	    (callback (+ time (car dur-lst)) 'play-list (+ time (car dur-lst))
+		      instr
+		      (cdr evt-lst)
+		      (cdr dur-lst)
+		      (cdr velo-lst))))))
+
+
+
+					;(play-note (now) synth0 60 100 10000)
+
+					;(play-list (now) synth0 '(40 40 40 40) '(12000 12000 12000 12000) '(100 70 80 60))
+
+
+					;(send-point (now) 
+					;	    (point (random) (random) (* (random) 0.5) 0 (random) (random) (random))
+					;	    (point (random) (random) (* (random) 0.5) 0 (random) (random) (random))
+					;	    (/ 48000 48000.0))
+
+					;(send-line (now)
+					;	   (line (random) (random) (random) (random) (* (random) 0.5) 0 (random) (random) (random))
+					;	   (line (random) (random) (random) (random) (* (random) 0.5) 0 (random) (random) (random))
+					;	   	    (/ 48000 48000.0))
+
+					;(point (random) (random) (* (random) 0.5) 0 (random) (random) (random))
+
+
+    (define send-point
+      (lambda (time pt0 pt1 dur)
+	(io:osc:send time 
+		     address
+		     "/Tessellation/Point/"
+		     (point-x pt0)
+		     (point-y pt0)
+		     (point-radius pt0)
+		     (point-state pt0)
+		     (point-sfp pt0)
+		     (point-stp pt0)
+		     (point-expr pt0)
+		     (point-x pt1)
+		     (point-y pt1)
+		     (point-radius pt1)
+		     (point-state pt1)
+		     (point-sfp pt1)
+		     (point-stp pt1)
+		     (point-expr pt1)
+		     dur)))
+
+
+    (define send-line
+      (lambda (time ln0 ln1 dur)
+	(io:osc:send time 
+		     address
+		     "/Tessellation/Line/"
+		     (line-x0 ln0)
+		     (line-y0 ln0)
+		     (line-x1 ln0)
+		     (line-y1 ln0)
+		     (line-width ln0)
+		     (line-state ln0)
+		     (line-sfp ln0)
+		     (line-stp ln0)
+		     (line-expr ln0)
+		     (line-x0 ln1)
+		     (line-y0 ln1)
+		     (line-x1 ln0)
+		     (line-y1 ln0)
+		     (line-width ln1)
+		     (line-state ln1)
+		     (line-sfp ln1)
+		     (line-stp ln1)
+		     (line-expr ln1)
+		     dur)))
+
+    (define send-background
+      (lambda (time pattern)
+	(io:osc:send time address "/Tessellation/Background/" pattern)))
+
+
+
+    (define point
+      (lambda (x y radius state stp sfp expr)
+	(list x y radius state stp sfp expr)))
+
+    (define point-x
+      (lambda (pt)
+	(list-ref pt 0)))
+
+    (define point-y
+      (lambda (pt)
+	(list-ref pt 1)))
+
+    (define point-radius
+      (lambda (pt)
+	(list-ref pt 2)))
+
+    (define point-state
+      (lambda (pt)
+	(list-ref pt 3)))
+
+    (define point-stp
+      (lambda (pt)
+	(list-ref pt 4)))
+
+    (define point-sfp
+      (lambda (pt)
+	(list-ref pt 5)))
+
+    (define point-expr
+      (lambda (pt)
+	(list-ref pt 6)))
+
+    (define line
+      (lambda (x0 y0 x1 y1 width state stp sfp expr)
+	(list x0 y0 x1 y1 width state stp sfp expr)))
+
+    (define line-x0
+      (lambda (ln)
+	(list-ref ln 0)))
+
+    (define line-y0
+      (lambda (ln)
+	(list-ref ln 1)))
+
+    (define line-x1
+      (lambda (ln)
+	(list-ref ln 2)))
+
+    (define line-y1
+      (lambda (ln)
+	(list-ref ln 3)))
+
+    (define line-width
+      (lambda (ln)
+	(list-ref ln 4)))
+
+    (define line-state
+      (lambda (ln)
+	(list-ref ln 5)))
+
+    (define line-stp
+      (lambda (ln)
+	(list-ref ln 6)))
+
+    (define line-sfp
+      (lambda (ln)
+	(list-ref ln 7)))
+
+    (define line-expr
+      (lambda (ln)
+	(list-ref ln 8)))
 
 
 )

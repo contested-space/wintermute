@@ -6,7 +6,7 @@
 #include "Tile.h"
 
 
-char state_lerp(int, int, float);
+char state_lerp(char, char, float);
 
 class Tessellation {
   public:

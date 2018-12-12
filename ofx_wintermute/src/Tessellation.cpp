@@ -118,6 +118,86 @@ void tessBackground::update(Tile** tm, int matrix_width, int matrix_height){
       }
     }
     break;
+  case 4:
+    for (int i = 0; i < matrix_width; i++){
+      for (int j = 0; j < matrix_height; j++){
+	//tm[i][j].target_state = target_state;
+	tm[i][j].previous_prob_to = tm[i][j].switch_to_target_probability;
+	tm[i][j].previous_prob_from = tm[i][j].switch_from_target_probability;
+	tm[i][j].set_target(Tile::ALIVE, 0.7, 0.0);
+   
+	//tm[i][j].switch_to_target_probability = 1.0;
+	//tm[i][j].switch_from_target_probability = 0.0;
+	//tm[i][j].target_state = Tile::ALIVE;
+	////cout << "1.1.1.2" << i << endl;
+	////cout << "1.1.1.3" << j << endl;
+      }
+    }
+    break;
+  case 5:
+    for (int i = 0; i < matrix_width; i++){
+      for (int j = 0; j < matrix_height; j++){
+	//tm[i][j].target_state = target_state;
+	tm[i][j].previous_prob_to = tm[i][j].switch_to_target_probability;
+	tm[i][j].previous_prob_from = tm[i][j].switch_from_target_probability;
+	tm[i][j].set_target(Tile::DEAD, 0.7, 0.0);
+
+	//tm[i][j].switch_to_target_probability = 1.0;
+	//tm[i][j].switch_from_target_probability = 0.0;
+	//tm[i][j].target_state = Tile::ALIVE;
+	////cout << "1.1.1.2" << i << endl;
+	////cout << "1.1.1.3" << j << endl;
+      }
+    }
+    break;
+  case 6:
+    for (int i = 0; i < matrix_width; i++){
+      for (int j = 0; j < matrix_height; j++){
+	//tm[i][j].target_state = target_state;
+	tm[i][j].previous_prob_to = tm[i][j].switch_to_target_probability;
+	tm[i][j].previous_prob_from = tm[i][j].switch_from_target_probability;
+	tm[i][j].set_target(Tile::ALIVE, 0.7, 0.03);
+
+	//tm[i][j].switch_to_target_probability = 1.0;
+	//tm[i][j].switch_from_target_probability = 0.0;
+	//tm[i][j].target_state = Tile::ALIVE;
+	////cout << "1.1.1.2" << i << endl;
+	////cout << "1.1.1.3" << j << endl;
+      }
+    }
+    break;
+  case 7:
+    for (int i = 0; i < matrix_width; i++){
+      for (int j = 0; j < matrix_height; j++){
+	//tm[i][j].target_state = target_state;
+	tm[i][j].previous_prob_to = tm[i][j].switch_to_target_probability;
+	tm[i][j].previous_prob_from = tm[i][j].switch_from_target_probability;
+	tm[i][j].set_target(Tile::DEAD, 0.7, 0.03);
+
+	//tm[i][j].switch_to_target_probability = 1.0;
+	//tm[i][j].switch_from_target_probability = 0.0;
+	//tm[i][j].target_state = Tile::ALIVE;
+	////cout << "1.1.1.2" << i << endl;
+	////cout << "1.1.1.3" << j << endl;
+      }
+    }
+    break;
+  case 8:
+    for (int i = 0; i < matrix_width; i++){
+      for (int j = 0; j < matrix_height; j++){
+	//tm[i][j].target_state = target_state;
+	tm[i][j].previous_prob_to = tm[i][j].switch_to_target_probability;
+	tm[i][j].previous_prob_from = tm[i][j].switch_from_target_probability;
+	tm[i][j].set_target(Tile::DEAD, 1.0, 1.0);
+
+	//tm[i][j].switch_to_target_probability = 1.0;
+	//tm[i][j].switch_from_target_probability = 0.0;
+	//tm[i][j].target_state = Tile::ALIVE;
+	////cout << "1.1.1.2" << i << endl;
+	////cout << "1.1.1.3" << j << endl;
+      }
+    }
+    break;       
   }
 }
 
@@ -437,7 +517,8 @@ void tessStaticLine::morph_into(tessStaticLine *sl, float dur){
 }
 
 //not a real lerp, transition from state_begin to state_end through DONT_CARE if they differ
-char state_lerp(int state_begin, int state_end, float pos){
+char state_lerp(char state_begin, char state_end, float pos){
+  //printf("state begin: %u\n state end: %u\n", state_begin, state_end);
   if (state_begin == state_end){
     return state_begin;
   }

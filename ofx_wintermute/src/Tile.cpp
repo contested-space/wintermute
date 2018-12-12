@@ -50,7 +50,9 @@ void Tile::roll_DONT_CARE(){
 		       switch_from_target_probability :
 		       switch_to_target_probability)){
     previous_state = state;
-    state = ~state;
+    if (state == ALIVE) state = DEAD;
+    else state = ALIVE;
+    //state = ~state;
   }
 }
 
@@ -58,7 +60,9 @@ void Tile::roll_switch_from_target(){
   //cout << "FROM()" << endl;
   if (ofRandom(1.0) < switch_from_target_probability) {
     previous_state = state;
-    state = ~target_state;
+    if (target_state == ALIVE) state = DEAD;
+    else state = ALIVE;
+    //state = ~target_state;
   }
 }
 
